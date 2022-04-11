@@ -1,0 +1,9 @@
+
+POST http://localhost:8080/post
+Content-Type: application/json
+
+{
+    "userId": "78d724daa87e8d0a",
+    "content": "test create post",
+    "haveAttachment": false
+}

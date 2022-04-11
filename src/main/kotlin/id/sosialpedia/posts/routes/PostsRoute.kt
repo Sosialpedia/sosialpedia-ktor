@@ -1,0 +1,63 @@
+package id.sosialpedia.posts.routes
+
+import id.sosialpedia.posts.domain.PostRepository
+import id.sosialpedia.posts.routes.model.PostRequest
+import id.sosialpedia.util.WebResponse
+import io.ktor.application.*
+import io.ktor.http.*
+import io.ktor.request.*
+import io.ktor.response.*
+import io.ktor.routing.*
+import org.koin.ktor.ext.inject
+
+fun Application.configurePostsRouting() {
+    val postUserRepository by inject<PostRepository>()
+
+    routing {
+        get("/posts") {
+            val httpStatusCode = HttpStatusCode.OK
+            val userId = call.request.queryParameters["userId"] ?: throw IllegalArgumentException("userId is empty!")
+            val result = postUserRepository.getAllPostByUserId(userId)
+            call.respond(httpStatusCode, WebResponse(httpStatusCode.description, result, httpStatusCode.value))
+        }
+        post("/post") {
+            var httpStatusCode = HttpStatusCode.Created
+            val postRequest = call.receive<PostRequest>()
+            val result = postUserRepository.createPost(postRequest)
+            if (result.isSuccess) {
+                call.respond(
+                    httpStatusCode, WebResponse(
+                        httpStatusCode.description,
+                        result.getOrNull(),
+                        httpStatusCode.value
+                    )
+                )
+            } else {
+                httpStatusCode = HttpStatusCode.NotAcceptable
+                call.respond(
+                    httpStatusCode, WebResponse<List<Int>>(
+                        message = result.exceptionOrNull()?.cause?.localizedMessage ?: "Unknown error occurred",
+                        data = emptyList(),
+                        code = httpStatusCode.value
+                    )
+                )
+            }
+        }
+        delete("/post") {
+            val httpStatusCode = HttpStatusCode.OK
+            val postId = call.request.queryParameters["postId"] ?: throw NoSuchElementException("postId can't be empty")
+             val userId = call.request.queryParameters["userId"] ?: throw NoSuchElementException("userId can't be empty")
+            postUserRepository.deletePostById(
+                    userId = userId,
+                    postId = postId
+                )
+            call.respond(
+                WebResponse(
+                    message = httpStatusCode.description,
+                    data = listOf("Successfully deleted"),
+                    code = httpStatusCode.value
+                )
+            )
+        }
+    }
+}
