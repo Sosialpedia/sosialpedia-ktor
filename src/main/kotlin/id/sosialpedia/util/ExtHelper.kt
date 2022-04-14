@@ -9,6 +9,10 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
 
+/**
+ * @author Samuel Mareno
+ * @Date 12/04/22
+ */
 fun UUID.toShuffledMD5(length: Int): String {
     val md = MessageDigest.getInstance("MD5")
     val chars = BigInteger(1, md.digest(toString().toByteArray()))
@@ -33,7 +37,12 @@ fun LocalDateTime.toFormattedString(): String {
     return format(formatter)
 }
 
-fun <T: Any> String.execAndMap(transform: (ResultSet) -> T) : List<T> {
+fun String.toLocalDateTime(): LocalDateTime {
+    val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")
+    return LocalDateTime.parse(this, formatter)
+}
+
+fun <T : Any> String.execAndMap(transform: (ResultSet) -> T): List<T> {
     val result = arrayListOf<T>()
     TransactionManager.current().exec(this) { rs ->
         while (rs.next()) {

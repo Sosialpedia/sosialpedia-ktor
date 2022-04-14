@@ -3,19 +3,18 @@ package id.sosialpedia.comments.data
 import id.sosialpedia.comments.data.model.ChildCommentsEntity
 import id.sosialpedia.comments.data.model.CommentsEntity
 import id.sosialpedia.comments.domain.CommentRepository
+import id.sosialpedia.comments.domain.model.ChildComment
 import id.sosialpedia.comments.domain.model.Comment
+import id.sosialpedia.comments.routes.model.ChildCommentRequest
 import id.sosialpedia.comments.routes.model.CommentRequest
-import id.sosialpedia.posts.data.model.DislikesEntity
-import id.sosialpedia.posts.data.model.LikesEntity
 import id.sosialpedia.posts.data.model.PostsEntity
+import id.sosialpedia.reaction.data.model.DislikesEntity
+import id.sosialpedia.reaction.data.model.LikesEntity
 import id.sosialpedia.util.execAndMap
 import id.sosialpedia.util.toFormattedString
 import id.sosialpedia.util.toShuffledMD5
-import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.count
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.time.LocalDateTime
 import java.util.*
@@ -42,7 +41,7 @@ class CommentRepositoryImpl(private val db: Database) : CommentRepository {
                         .groupBy(DislikesEntity.id)
                         .count()
                         .toInt()
-                    val totalComment = (CommentsEntity innerJoin ChildCommentsEntity)
+                    val totalChildComment = (CommentsEntity innerJoin ChildCommentsEntity)
                         .slice(ChildCommentsEntity.id.count())
                         .select(ChildCommentsEntity.commentId eq it[CommentsEntity.id])
                         .groupBy(ChildCommentsEntity.id)
@@ -53,12 +52,11 @@ class CommentRepositoryImpl(private val db: Database) : CommentRepository {
                         userId = it[CommentsEntity.userId],
                         content = it[CommentsEntity.content],
                         postId = it[PostsEntity.id],
-                        commentId = null,
                         haveAttachment = it[CommentsEntity.haveAttach],
                         createdAt = it[CommentsEntity.createdAt].toFormattedString(),
                         totalLike = totalLike,
                         totalDislike = totalDislike,
-                        totalComment = totalComment
+                        totalChildComment = totalChildComment
                     )
                 }
                 Result.success(result)
@@ -85,7 +83,6 @@ class CommentRepositoryImpl(private val db: Database) : CommentRepository {
                         userId = it[CommentsEntity.userId],
                         content = it[CommentsEntity.content],
                         postId = it[CommentsEntity.postId],
-                        commentId = null,
                         haveAttachment = it[CommentsEntity.haveAttach],
                         createdAt = it[CommentsEntity.createdAt].toFormattedString()
                     )
@@ -97,12 +94,89 @@ class CommentRepositoryImpl(private val db: Database) : CommentRepository {
         }
     }
 
-    override suspend fun deleteCommentToPost(postId: String, userId: String) {
-        TODO("Not yet implemented")
+    override suspend fun deleteComment(commentId: String, postId: String, userId: String): Result<String> {
+        return newSuspendedTransaction {
+            try {
+                CommentsEntity.deleteWhere {
+                    (CommentsEntity.id eq commentId) and
+                            (CommentsEntity.postId eq postId) and
+                            (CommentsEntity.userId eq userId)
+                }
+                Result.success("Successfully deleted")
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
     }
 
-    override suspend fun deleteCommentToComment(commentId: String, userId: String) {
-        TODO("Not yet implemented")
+    override suspend fun getChildComments(commentId: String): Result<List<ChildComment>> {
+        return newSuspendedTransaction {
+            try {
+                val result = ChildCommentsEntity
+                    .select {
+                        ChildCommentsEntity.commentId eq commentId
+                    }.orderBy(ChildCommentsEntity.createdAt)
+                    .map {
+                        ChildComment(
+                            id = it[ChildCommentsEntity.id],
+                            userId = it[ChildCommentsEntity.userId],
+                            postId = it[ChildCommentsEntity.postId],
+                            commentId = it[ChildCommentsEntity.commentId],
+                            content = it[ChildCommentsEntity.content],
+                            haveAttachment = it[ChildCommentsEntity.haveAttach],
+                            createdAt = it[ChildCommentsEntity.createdAt].toFormattedString()
+                        )
+                    }
+                Result.success(result)
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
+    }
+
+    override suspend fun addChildComment(childCommentRequest: ChildCommentRequest): Result<ChildComment> {
+        return newSuspendedTransaction {
+            try {
+                val insert = ChildCommentsEntity.insert {
+                    it[id] = UUID.randomUUID().toShuffledMD5(20)
+                    it[userId] = childCommentRequest.userId
+                    it[postId] = childCommentRequest.postId
+                    it[content] = childCommentRequest.content
+                    it[commentId] = childCommentRequest.commentId
+                    it[haveAttach] = childCommentRequest.haveAttachment
+                    it[createdAt] = LocalDateTime.now()
+                }
+                val result = insert.resultedValues!!.map {
+                    ChildComment(
+                        id = it[ChildCommentsEntity.id],
+                        userId = it[ChildCommentsEntity.userId],
+                        postId = it[ChildCommentsEntity.postId],
+                        content = it[ChildCommentsEntity.content],
+                        commentId = it[ChildCommentsEntity.commentId],
+                        haveAttachment = it[ChildCommentsEntity.haveAttach],
+                        createdAt = it[ChildCommentsEntity.createdAt].toFormattedString()
+                    )
+                }.first()
+                Result.success(result)
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
+    }
+
+    override suspend fun deleteChildComment(childCommentId: String, commentId: String, userId: String): Result<String> {
+        return newSuspendedTransaction {
+            try {
+                ChildCommentsEntity.deleteWhere {
+                    (ChildCommentsEntity.id eq childCommentId) and
+                            (ChildCommentsEntity.userId eq userId) and
+                            (ChildCommentsEntity.commentId eq commentId)
+                }
+                Result.success("Successfully deleted")
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
     }
 
     override suspend fun testingTransaction(): Result<List<String>> {

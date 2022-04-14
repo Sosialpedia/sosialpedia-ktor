@@ -1,9 +1,23 @@
-
 POST http://localhost:8080/post
 Content-Type: application/json
 
 {
-    "userId": "78d724daa87e8d0a",
-    "content": "test create post",
-    "haveAttachment": false
+  "userId": "78d724daa87e8d0a",
+  "content": "test create post",
+  "haveAttachment": false
+}
+
+###
+POST http://localhost:8080/user
+Content-Type: application/json
+
+{
+  "username": "contoh_username",
+  "email": "contoh@email.com",
+  "password": "hashedPassword",
+  "phoneNumber": "091237783",
+  "dateBirth": "13-01-2002 00:00:00",
+  "gender": "Male",
+  "ipAddress": "10.10.10.10",
+  "device": "MacOS"
 }

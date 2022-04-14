@@ -1,6 +1,8 @@
 package id.sosialpedia.comments.domain
 
+import id.sosialpedia.comments.domain.model.ChildComment
 import id.sosialpedia.comments.domain.model.Comment
+import id.sosialpedia.comments.routes.model.ChildCommentRequest
 import id.sosialpedia.comments.routes.model.CommentRequest
 
 interface CommentRepository {
@@ -9,9 +11,13 @@ interface CommentRepository {
 
     suspend fun addComment(commentRequest: CommentRequest): Result<Comment>
 
-    suspend fun deleteCommentToPost(postId: String, userId: String)
+    suspend fun deleteComment(commentId: String, postId: String, userId: String): Result<String>
 
-    suspend fun deleteCommentToComment(commentId: String, userId: String)
+    suspend fun getChildComments(commentId: String): Result<List<ChildComment>>
+
+    suspend fun addChildComment(childCommentRequest: ChildCommentRequest): Result<ChildComment>
+
+    suspend fun deleteChildComment(childCommentId: String, commentId: String, userId: String): Result<String>
 
     suspend fun testingTransaction(): Result<List<String>>
 }

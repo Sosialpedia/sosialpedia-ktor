@@ -1,6 +1,7 @@
-package id.sosialpedia.posts.data.model
+package id.sosialpedia.reaction.data.model
 
 import id.sosialpedia.comments.data.model.CommentsEntity
+import id.sosialpedia.posts.data.model.PostsEntity
 import id.sosialpedia.users.data.model.Users
 import id.sosialpedia.util.toShuffledMD5
 import org.jetbrains.exposed.sql.Table

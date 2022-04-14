@@ -1,15 +1,15 @@
 package id.sosialpedia.posts.data
 
+import id.sosialpedia.comments.data.model.ChildCommentsEntity
 import id.sosialpedia.comments.data.model.CommentsEntity
-import id.sosialpedia.posts.data.model.DislikesEntity
-import id.sosialpedia.posts.data.model.LikesEntity
 import id.sosialpedia.posts.data.model.PostsEntity
 import id.sosialpedia.posts.domain.PostRepository
 import id.sosialpedia.posts.domain.model.Post
-import id.sosialpedia.posts.routes.model.PostRequest
+import id.sosialpedia.posts.routes.model.CreatePostRequest
+import id.sosialpedia.reaction.data.model.DislikesEntity
+import id.sosialpedia.reaction.data.model.LikesEntity
 import id.sosialpedia.users.data.model.Users
 import id.sosialpedia.util.toFormattedString
-import id.sosialpedia.util.toMills
 import id.sosialpedia.util.toShuffledMD5
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -47,6 +47,12 @@ class PostRepositoryImpl(private val db: Database) : PostRepository {
                     .groupBy(CommentsEntity.id)
                     .count()
                     .toInt()
+                val totalChildComment = (CommentsEntity innerJoin ChildCommentsEntity)
+                    .slice(ChildCommentsEntity.id)
+                    .select((ChildCommentsEntity.commentId eq CommentsEntity.id) and (ChildCommentsEntity.postId eq it[PostsEntity.id]))
+                    .groupBy(ChildCommentsEntity.id)
+                    .count()
+                    .toInt()
                 Post(
                     id = it[PostsEntity.id],
                     userId = it[PostsEntity.userId],
@@ -55,13 +61,13 @@ class PostRepositoryImpl(private val db: Database) : PostRepository {
                     createdAt = it[PostsEntity.createdAt].toFormattedString(),
                     totalLike = totalLike,
                     totalDislike = totalDislike,
-                    totalComment = totalComment
+                    totalComment = totalComment + totalChildComment
                 )
             }
         }
     }
 
-    override suspend fun createPost(postRequest: PostRequest): Result<Post> {
+    override suspend fun createPost(postRequest: CreatePostRequest): Result<Post> {
         return newSuspendedTransaction(db = db) {
             try {
                 val insert = PostsEntity.insert {

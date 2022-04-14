@@ -1,8 +1,7 @@
 package id.sosialpedia.posts.domain.model
 
-import kotlinx.serialization.Serializable
 
-@Serializable
+@kotlinx.serialization.Serializable
 data class Post(
     val id: String,
     val userId: String,

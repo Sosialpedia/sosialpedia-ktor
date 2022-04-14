@@ -4,6 +4,10 @@ import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.javatime.datetime
 
+/**
+ * @author Samuel Mareno
+ * @Date 12/04/22
+ */
 object Users : Table("users") {
     val id: Column<String> = varchar("id", 16).uniqueIndex()
     val username = varchar("username", 50).uniqueIndex()

@@ -1,28 +1,77 @@
 package id.sosialpedia.users.routes
 
-import id.sosialpedia.users.data.UserRepository
-import io.ktor.application.*
+import id.sosialpedia.users.domain.UserRepository
+import id.sosialpedia.users.routes.model.CreateUserRequest
+import id.sosialpedia.util.WebResponse
 import io.ktor.http.*
-import io.ktor.response.*
-import io.ktor.routing.*
-import org.koin.ktor.ext.inject
+import io.ktor.server.application.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
+import org.koin.java.KoinJavaComponent.inject
 
+/**
+ * @author Samuel Mareno
+ * @Date 12/04/22
+ */
 fun Application.configureUsersRouting() {
-    val userRepository by inject<UserRepository>()
+    val userRepository by inject<UserRepository>(UserRepository::class.java)
     routing {
         get("/users") {
             val result = userRepository.getAllUsers()
-            call.respond(result)
+            call.respond(HttpStatusCode.OK, result)
         }
-        post("users/register") {
-            val result = userRepository.registerUser()
+        get("/user/{userId}") {
+            var httpStatusCode = HttpStatusCode.OK
+            val userId = call.parameters["userId"] ?: throw IllegalArgumentException("userId can't be empty")
+            val result = userRepository.getUserById(userId)
             if (result.isSuccess) {
-                call.respond(HttpStatusCode.Created, "success")
+                call.respond(
+                    httpStatusCode,
+                    WebResponse(
+                        httpStatusCode.description,
+                        result.getOrNull(),
+                        httpStatusCode.value
+                    )
+                )
             } else {
-                call.respond(HttpStatusCode.OK, "${result.exceptionOrNull()?.cause?.localizedMessage}")
+                httpStatusCode = HttpStatusCode.NotAcceptable
+                call.respond(
+                    httpStatusCode,
+                    WebResponse(
+                        httpStatusCode.description,
+                        result.exceptionOrNull()?.cause?.localizedMessage,
+                        httpStatusCode.value
+                    )
+                )
             }
         }
-        put("users/upd4t3l0g1n/{userId}") {
+        post("user/register") {
+            var httpStatusCode = HttpStatusCode.Created
+            val createUserRequest = call.receive<CreateUserRequest>()
+            val result = userRepository.registerUser(createUserRequest)
+            if (result.isSuccess) {
+                call.respond(
+                    httpStatusCode,
+                    WebResponse(
+                        httpStatusCode.description,
+                        result.getOrNull(),
+                        httpStatusCode.value
+                    )
+                )
+            } else {
+                httpStatusCode = HttpStatusCode.NotAcceptable
+                call.respond(
+                    httpStatusCode,
+                    WebResponse(
+                        httpStatusCode.description,
+                        result.exceptionOrNull()?.cause?.localizedMessage,
+                        httpStatusCode.value
+                    )
+                )
+            }
+        }
+        put("user/upd4t3l0g1n/{userId}") {
             val userId = call.parameters["userId"] ?: throw IllegalArgumentException("userId can't be empty")
             val result = userRepository.updateUserLogin(
                 id = userId,
@@ -31,7 +80,7 @@ fun Application.configureUsersRouting() {
             )
             call.respond("operation: ${result.isSuccess}")
         }
-        delete("users/{userId}") {
+        delete("user/{userId}") {
             call.parameters["userId"]?.let {
                 userRepository.deleteUser(it)
                 call.respond("User deleted")

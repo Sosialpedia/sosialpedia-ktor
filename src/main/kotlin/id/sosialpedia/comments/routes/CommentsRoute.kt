@@ -1,17 +1,18 @@
 package id.sosialpedia.comments.routes
 
 import id.sosialpedia.comments.domain.CommentRepository
+import id.sosialpedia.comments.routes.model.ChildCommentRequest
 import id.sosialpedia.comments.routes.model.CommentRequest
 import id.sosialpedia.util.WebResponse
-import io.ktor.application.*
 import io.ktor.http.*
-import io.ktor.request.*
-import io.ktor.response.*
-import io.ktor.routing.*
-import org.koin.ktor.ext.inject
+import io.ktor.server.application.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
+import org.koin.java.KoinJavaComponent.inject
 
 fun Application.configureCommentsRouting() {
-    val commentRepository by inject<CommentRepository>()
+    val commentRepository by inject<CommentRepository>(CommentRepository::class.java)
 
     routing {
         get("/comments") {
@@ -66,9 +67,64 @@ fun Application.configureCommentsRouting() {
             }
         }
 
-        get("comments/reno") {
+//        get("comments/reno") {
+//            var httpStatusCode = HttpStatusCode.OK
+//            val result = commentRepository.testingTransaction()
+//            if (result.isSuccess) {
+//                call.respond(
+//                    httpStatusCode,
+//                    WebResponse(httpStatusCode.description, result.getOrNull(), httpStatusCode.value)
+//                )
+//            } else {
+//                httpStatusCode = HttpStatusCode.NotAcceptable
+//                call.respond(
+//                    httpStatusCode,
+//                    WebResponse(
+//                        httpStatusCode.description,
+//                        result.exceptionOrNull()?.localizedMessage,
+//                        httpStatusCode.value
+//                    )
+//                )
+//            }
+//        }
+        delete("/comment") {
             var httpStatusCode = HttpStatusCode.OK
-            val result = commentRepository.testingTransaction()
+            val commentId = call.request.queryParameters["commentId"]
+                ?: throw IllegalArgumentException("commentId can't be blank")
+            val postId = call.request.queryParameters["postId"]
+                ?: throw IllegalArgumentException("postId can't be blank")
+            val userId = call.request.queryParameters["userId"]
+                ?: throw IllegalArgumentException("userId can't be blank")
+            val result = commentRepository.deleteComment(commentId, postId, userId)
+            if (result.isSuccess) {
+                call.respond(
+                    httpStatusCode,
+                    WebResponse(
+                        httpStatusCode.description,
+                        result.getOrNull(),
+                        httpStatusCode.value
+                    )
+                )
+            } else {
+                httpStatusCode = HttpStatusCode.NotAcceptable
+                call.respond(
+                    httpStatusCode,
+                    WebResponse(
+                        httpStatusCode.description,
+                        result.exceptionOrNull()?.localizedMessage,
+                        httpStatusCode.value
+                    )
+                )
+            }
+        }
+
+        get("/comments/c") {
+            var httpStatusCode = HttpStatusCode.OK
+            val commentId = call.request.queryParameters["commentId"]
+                ?: throw IllegalArgumentException("commentId can't be empty")
+            call.request.queryParameters["userId"]
+                ?: throw IllegalArgumentException("userId can't be empty")
+            val result = commentRepository.getChildComments(commentId)
             if (result.isSuccess) {
                 call.respond(
                     httpStatusCode,
@@ -78,7 +134,67 @@ fun Application.configureCommentsRouting() {
                 httpStatusCode = HttpStatusCode.NotAcceptable
                 call.respond(
                     httpStatusCode,
-                    WebResponse(httpStatusCode.description, result.exceptionOrNull()?.localizedMessage, httpStatusCode.value)
+                    WebResponse(
+                        httpStatusCode.description,
+                        result.exceptionOrNull()?.localizedMessage,
+                        httpStatusCode.value
+                    )
+                )
+
+            }
+        }
+        post("/comment/c") {
+            var httpStatusCode = HttpStatusCode.OK
+            val childCommentRequest = call.receive<ChildCommentRequest>()
+            val result = commentRepository.addChildComment(childCommentRequest)
+            if (result.isSuccess) {
+                call.respond(
+                    httpStatusCode,
+                    WebResponse(
+                        httpStatusCode.description,
+                        result.getOrNull(),
+                        httpStatusCode.value
+                    )
+                )
+            } else {
+                httpStatusCode = HttpStatusCode.NotAcceptable
+                call.respond(
+                    httpStatusCode,
+                    WebResponse(
+                        httpStatusCode.description,
+                        result.exceptionOrNull()?.localizedMessage,
+                        httpStatusCode.value
+                    )
+                )
+            }
+        }
+        delete("comment/c") {
+            var httpStatusCode = HttpStatusCode.OK
+            val childCommentId = call.request.queryParameters["childCommentId"]
+                ?: throw IllegalArgumentException("childCommentId can't be empty")
+            val commentId = call.request.queryParameters["commentId"]
+                ?: throw IllegalArgumentException("commentId can't be empty")
+            val userId = call.request.queryParameters["userId"]
+                ?: throw IllegalArgumentException("userId can't be empty")
+            val result = commentRepository.deleteChildComment(childCommentId, commentId, userId)
+            if (result.isSuccess) {
+                call.respond(
+                    httpStatusCode,
+                    WebResponse(
+                        httpStatusCode.description,
+                        result.getOrNull(),
+                        httpStatusCode.value
+                    )
+                )
+            } else {
+                httpStatusCode = HttpStatusCode.NotAcceptable
+                call.respond(
+                    httpStatusCode,
+                    WebResponse(
+                        httpStatusCode.description,
+                        result.exceptionOrNull()?.localizedMessage,
+                        httpStatusCode.value
+                    )
                 )
             }
         }

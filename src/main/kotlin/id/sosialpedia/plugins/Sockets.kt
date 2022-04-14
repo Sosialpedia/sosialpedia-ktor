@@ -1,22 +1,9 @@
 package id.sosialpedia.plugins
 
-import io.ktor.network.selector.*
-import io.ktor.network.sockets.*
-import io.ktor.utils.io.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import java.io.InputStream
-import java.util.*
-import io.ktor.network.tls.*
-import io.ktor.utils.io.core.*
-import io.ktor.http.cio.websocket.*
-import io.ktor.websocket.*
-import java.time.*
-import io.ktor.application.*
-import io.ktor.response.*
-import io.ktor.request.*
-import io.ktor.routing.*
+import io.ktor.server.application.*
+import io.ktor.server.routing.*
+import io.ktor.server.websocket.*
+import java.time.Duration
 
 fun Application.configureSockets() {
 
