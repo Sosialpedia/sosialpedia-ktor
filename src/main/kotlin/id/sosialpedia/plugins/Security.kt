@@ -1,17 +1,23 @@
 package id.sosialpedia.plugins
 
+import id.sosialpedia.chatwebsocket.helper.ChatSession
 import io.ktor.server.application.*
-import io.ktor.server.routing.*
+import io.ktor.server.application.ApplicationCallPipeline.ApplicationPhase.Plugins
 import io.ktor.server.sessions.*
 import kotlin.collections.set
+import kotlin.random.Random
 
 fun Application.configureSecurity() {
-    data class MySession(val count: Int = 0)
     install(Sessions) {
-        cookie<MySession>("MY_SESSION") {
+        cookie<ChatSession>("CHAT_SESSION") {
             cookie.extensions["SameSite"] = "lax"
         }
     }
-    routing {
+
+    intercept(Plugins) {
+        if (call.sessions.get<ChatSession>() == null) {
+            val username = call.parameters["username"] ?: "guest ${Random.nextInt(3)}"
+            call.sessions.set(ChatSession(username, generateSessionId()))
+        }
     }
 }

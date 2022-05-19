@@ -18,8 +18,28 @@ fun Application.configureUsersRouting() {
     val userRepository by inject<UserRepository>(UserRepository::class.java)
     routing {
         get("/users") {
+            var httpStatusCode = HttpStatusCode.OK
             val result = userRepository.getAllUsers()
-            call.respond(HttpStatusCode.OK, result)
+            if (result.isSuccess) {
+                call.respond(
+                    httpStatusCode,
+                    WebResponse(
+                        httpStatusCode.description,
+                        result.getOrNull(),
+                        httpStatusCode.value
+                    )
+                )
+            } else {
+                httpStatusCode = HttpStatusCode.NotAcceptable
+                call.respond(
+                    httpStatusCode,
+                    WebResponse(
+                        httpStatusCode.description,
+                        result.exceptionOrNull()?.cause?.localizedMessage,
+                        httpStatusCode.value
+                    )
+                )
+            }
         }
         get("/user/{userId}") {
             var httpStatusCode = HttpStatusCode.OK

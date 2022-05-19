@@ -19,24 +19,29 @@ import java.util.*
  * @Date 12/04/22
  */
 class UserRepositoryImpl(private val db: Database) : UserRepository {
-    override suspend fun getAllUsers(): List<User> {
+    override suspend fun getAllUsers(): Result<List<User>> {
         return newSuspendedTransaction {
-            Users.selectAll().map {
-                User(
-                    id = it[Users.id],
-                    username = it[Users.username],
-                    email = it[Users.email],
-                    phoneNumber = it[Users.phoneNumber],
-                    profilePic = it[Users.profilePic],
-                    bio = it[Users.bio],
-                    dateBirth = it[Users.dateBirth].toFormattedString(),
-                    gender = it[Users.gender],
-                    createdAt = it[Users.createdAt].toFormattedString(),
-                    updatedAt = it[Users.updatedAt]?.toFormattedString(),
-                    lastLogin = it[Users.lastLogin]?.toFormattedString(),
-                    ipAddress = it[Users.ipAddress] ?: "can't retrieve Ip Address",
-                    device = it[Users.device]
-                )
+            try {
+                val result = Users.selectAll().map {
+                    User(
+                        id = it[Users.id],
+                        username = it[Users.username],
+                        email = it[Users.email],
+                        phoneNumber = it[Users.phoneNumber],
+                        profilePic = it[Users.profilePic],
+                        bio = it[Users.bio],
+                        dateBirth = it[Users.dateBirth].toFormattedString(),
+                        gender = it[Users.gender],
+                        createdAt = it[Users.createdAt].toFormattedString(),
+                        updatedAt = it[Users.updatedAt]?.toFormattedString(),
+                        lastLogin = it[Users.lastLogin]?.toFormattedString(),
+                        ipAddress = it[Users.ipAddress] ?: "can't retrieve Ip Address",
+                        device = it[Users.device]
+                    )
+                }
+                Result.success(result)
+            } catch (e: Exception) {
+                Result.failure(e)
             }
         }
     }
@@ -101,7 +106,7 @@ class UserRepositoryImpl(private val db: Database) : UserRepository {
                         createdAt = it[Users.createdAt].toFormattedString(),
                         updatedAt = null,
                         lastLogin = it[Users.lastLogin]?.toFormattedString(),
-                        ipAddress = it[Users.ipAddress] ?: "can't retrieve Ip Address",
+                        ipAddress = it[Users.ipAddress] ?: "can't retrieve IP Address",
                         device = it[Users.device]
                     )
                 }.first()

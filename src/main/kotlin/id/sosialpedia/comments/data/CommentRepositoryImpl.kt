@@ -187,21 +187,21 @@ class CommentRepositoryImpl(private val db: Database) : CommentRepository {
                        posts.content,
                        users.id,
                        users.username,
-                       (SELECT COUNT(comments.id) FROM comments WHERE comments.post_id = posts.id)                                 as total_comment,
+                       (SELECT COUNT(comments.id) FROM comments 
+                       WHERE comments.post_id = posts.id) as total_comment,
                        (SELECT COUNT(likes.id)
                         FROM likes
                         WHERE likes.post_id = posts.id
-                          AND likes.comment_id IS NULL)                                                                            as total_like,
+                          AND likes.comment_id IS NULL) as total_like,
                        (SELECT COUNT(dislikes.id)
                         FROM dislikes
                         WHERE dislikes.post_id = posts.id
-                          AND dislikes.comment_id IS NULL)                                                                         as total_dislike
+                          AND dislikes.comment_id IS NULL) as total_dislike
                 FROM posts
                          INNER JOIN users ON (posts.user_id = users.id)
                 WHERE (username = 'reno')
             """.trimIndent()).execAndMap { resultSet ->
                 result += "username = ${resultSet.getString("users.username")}, postContent = ${resultSet.getString("posts.content")}"
-
             }
             Result.success(result)
         }

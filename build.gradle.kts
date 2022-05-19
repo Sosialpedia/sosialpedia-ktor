@@ -51,6 +51,7 @@ dependencies {
 
     // SQL Driver
     implementation("mysql:mysql-connector-java:8.0.28")
+    implementation("org.postgresql:postgresql:42.2.2")
 
     // Koin Dependency Injection
     implementation("io.insert-koin:koin-ktor:$koinVersion")

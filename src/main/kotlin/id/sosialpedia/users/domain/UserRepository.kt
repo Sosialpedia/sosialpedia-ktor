@@ -10,7 +10,7 @@ import id.sosialpedia.users.routes.model.UserInfoRequest
  */
 interface UserRepository {
 
-    suspend fun getAllUsers(): List<User>
+    suspend fun getAllUsers(): Result<List<User>>
 
     suspend fun getUserById(id: String): Result<List<User>>
 

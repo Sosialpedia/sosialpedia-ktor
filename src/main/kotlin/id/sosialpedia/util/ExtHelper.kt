@@ -26,6 +26,9 @@ fun UUID.toShuffledMD5(length: Int): String {
     return String(chars)
 }
 
+@Deprecated("use toFormattedString instead",
+    ReplaceWith("toFormattedString()")
+)
 fun LocalDateTime.toMills(): Long {
     return atZone(ZoneId.of("Asia/Jakarta"))
         .toInstant()
