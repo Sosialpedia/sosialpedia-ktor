@@ -12,5 +12,5 @@ data class ChildComment(
     val commentId: String,
     val content: String,
     val haveAttachment: Boolean,
-    val createdAt: String
+    val createdAt: Long
 )

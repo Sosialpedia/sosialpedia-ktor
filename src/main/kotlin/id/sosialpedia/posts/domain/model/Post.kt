@@ -7,7 +7,7 @@ data class Post(
     val userId: String,
     val content: String,
     val haveAttachment: Boolean,
-    val createdAt: String,
+    val createdAt: Long,
     val totalLike: Int = 0,
     val totalDislike: Int = 0,
     val totalComment: Int = 0,

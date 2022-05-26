@@ -14,97 +14,96 @@ import org.koin.java.KoinJavaComponent.inject
  * @author Samuel Mareno
  * @Date 12/04/22
  */
-fun Application.configureUsersRouting() {
+fun Route.configureUsersRouting() {
     val userRepository by inject<UserRepository>(UserRepository::class.java)
-    routing {
-        get("/users") {
-            var httpStatusCode = HttpStatusCode.OK
-            val result = userRepository.getAllUsers()
-            if (result.isSuccess) {
-                call.respond(
-                    httpStatusCode,
-                    WebResponse(
-                        httpStatusCode.description,
-                        result.getOrNull(),
-                        httpStatusCode.value
-                    )
+
+    get("/users") {
+        var httpStatusCode = HttpStatusCode.OK
+        val result = userRepository.getAllUsers()
+        if (result.isSuccess) {
+            call.respond(
+                httpStatusCode,
+                WebResponse(
+                    httpStatusCode.description,
+                    result.getOrNull(),
+                    httpStatusCode.value
                 )
-            } else {
-                httpStatusCode = HttpStatusCode.NotAcceptable
-                call.respond(
-                    httpStatusCode,
-                    WebResponse(
-                        httpStatusCode.description,
-                        result.exceptionOrNull()?.cause?.localizedMessage,
-                        httpStatusCode.value
-                    )
-                )
-            }
-        }
-        get("/user/{userId}") {
-            var httpStatusCode = HttpStatusCode.OK
-            val userId = call.parameters["userId"] ?: throw IllegalArgumentException("userId can't be empty")
-            val result = userRepository.getUserById(userId)
-            if (result.isSuccess) {
-                call.respond(
-                    httpStatusCode,
-                    WebResponse(
-                        httpStatusCode.description,
-                        result.getOrNull(),
-                        httpStatusCode.value
-                    )
-                )
-            } else {
-                httpStatusCode = HttpStatusCode.NotAcceptable
-                call.respond(
-                    httpStatusCode,
-                    WebResponse(
-                        httpStatusCode.description,
-                        result.exceptionOrNull()?.cause?.localizedMessage,
-                        httpStatusCode.value
-                    )
-                )
-            }
-        }
-        post("user/register") {
-            var httpStatusCode = HttpStatusCode.Created
-            val createUserRequest = call.receive<CreateUserRequest>()
-            val result = userRepository.registerUser(createUserRequest)
-            if (result.isSuccess) {
-                call.respond(
-                    httpStatusCode,
-                    WebResponse(
-                        httpStatusCode.description,
-                        result.getOrNull(),
-                        httpStatusCode.value
-                    )
-                )
-            } else {
-                httpStatusCode = HttpStatusCode.NotAcceptable
-                call.respond(
-                    httpStatusCode,
-                    WebResponse(
-                        httpStatusCode.description,
-                        result.exceptionOrNull()?.cause?.localizedMessage,
-                        httpStatusCode.value
-                    )
-                )
-            }
-        }
-        put("user/upd4t3l0g1n/{userId}") {
-            val userId = call.parameters["userId"] ?: throw IllegalArgumentException("userId can't be empty")
-            val result = userRepository.updateUserLogin(
-                id = userId,
-                ipAddress = "1.0.1.0.1",
-                device = "MacOS Intellij IDEA"
             )
-            call.respond("operation: ${result.isSuccess}")
+        } else {
+            httpStatusCode = HttpStatusCode.NotAcceptable
+            call.respond(
+                httpStatusCode,
+                WebResponse(
+                    httpStatusCode.description,
+                    result.exceptionOrNull()?.cause?.localizedMessage,
+                    httpStatusCode.value
+                )
+            )
         }
-        delete("user/{userId}") {
-            call.parameters["userId"]?.let {
-                userRepository.deleteUser(it)
-                call.respond("User deleted")
-            }
+    }
+    get("/user/{userId}") {
+        var httpStatusCode = HttpStatusCode.OK
+        val userId = call.parameters["userId"] ?: throw IllegalArgumentException("userId can't be empty")
+        val result = userRepository.getUserById(userId)
+        if (result.isSuccess) {
+            call.respond(
+                httpStatusCode,
+                WebResponse(
+                    httpStatusCode.description,
+                    result.getOrNull(),
+                    httpStatusCode.value
+                )
+            )
+        } else {
+            httpStatusCode = HttpStatusCode.NotAcceptable
+            call.respond(
+                httpStatusCode,
+                WebResponse(
+                    httpStatusCode.description,
+                    result.exceptionOrNull()?.cause?.localizedMessage,
+                    httpStatusCode.value
+                )
+            )
+        }
+    }
+    post("user/register") {
+        var httpStatusCode = HttpStatusCode.Created
+        val createUserRequest = call.receive<CreateUserRequest>()
+        val result = userRepository.registerUser(createUserRequest)
+        if (result.isSuccess) {
+            call.respond(
+                httpStatusCode,
+                WebResponse(
+                    httpStatusCode.description,
+                    result.getOrNull(),
+                    httpStatusCode.value
+                )
+            )
+        } else {
+            httpStatusCode = HttpStatusCode.NotAcceptable
+            call.respond(
+                httpStatusCode,
+                WebResponse(
+                    httpStatusCode.description,
+                    result.exceptionOrNull()?.cause?.localizedMessage,
+                    httpStatusCode.value
+                )
+            )
+        }
+    }
+    put("user/upd4t3l0g1n/{userId}") {
+        val userId = call.parameters["userId"] ?: throw IllegalArgumentException("userId can't be empty")
+        val result = userRepository.updateUserLogin(
+            id = userId,
+            ipAddress = "1.0.1.0.1",
+            device = "MacOS Intellij IDEA"
+        )
+        call.respond("operation: ${result.isSuccess}")
+    }
+    delete("user/{userId}") {
+        call.parameters["userId"]?.let {
+            userRepository.deleteUser(it)
+            call.respond("User deleted")
         }
     }
 }

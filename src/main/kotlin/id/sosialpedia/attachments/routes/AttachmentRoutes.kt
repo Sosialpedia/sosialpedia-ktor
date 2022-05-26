@@ -14,58 +14,58 @@ import org.koin.java.KoinJavaComponent.inject
  * @author Samuel Mareno
  * @Date 19/04/22
  */
-fun Application.configureAttachmentRoutes() {
+fun Route.configureAttachmentRoutes() {
     val attachmentRepository by inject<AttachmentRepository>(AttachmentRepository::class.java)
 
-    routing {
-        post("post/attachment") {
-            var httpStatusCode = HttpStatusCode.OK
-            val createAttachmentRequest = call.receive<CreateAttachmentRequest>()
-            val result = attachmentRepository.addAttachment(createAttachmentRequest)
-            if (result.isSuccess) {
-                call.respond(
-                    httpStatusCode, WebResponse(
-                        httpStatusCode.description,
-                        result.getOrNull(),
-                        httpStatusCode.value
-                    )
+    post("post/attachment") {
+        var httpStatusCode = HttpStatusCode.OK
+        val createAttachmentRequest = call.receive<CreateAttachmentRequest>()
+        val result = attachmentRepository.addAttachment(createAttachmentRequest)
+        if (result.isSuccess) {
+            call.respond(
+                httpStatusCode, WebResponse(
+                    httpStatusCode.description,
+                    result.getOrNull(),
+                    httpStatusCode.value
                 )
-            } else {
-                httpStatusCode = HttpStatusCode.NotAcceptable
-                call.respond(
-                    httpStatusCode,
-                    WebResponse(
-                        httpStatusCode.description,
-                        result.exceptionOrNull()?.cause?.localizedMessage,
-                        httpStatusCode.value
-                    )
+            )
+        } else {
+            httpStatusCode = HttpStatusCode.NotAcceptable
+            call.respond(
+                httpStatusCode,
+                WebResponse(
+                    httpStatusCode.description,
+                    result.exceptionOrNull()?.cause?.localizedMessage,
+                    httpStatusCode.value
                 )
-            }
+            )
         }
-        delete("post/attachment") {
-            var httpStatusCode = HttpStatusCode.OK
-            val attachmentId = call.request.queryParameters["attachmentId"] ?: throw IllegalArgumentException("attachmentId can't be empty")
-            val referenceId = call.request.queryParameters["referenceId"] ?: throw IllegalArgumentException("referenceId can't be empty")
-            val result = attachmentRepository.removeAttachment(attachmentId, referenceId)
-            if (result.isSuccess) {
-                call.respond(
-                    httpStatusCode, WebResponse(
-                        httpStatusCode.description,
-                        result.getOrNull(),
-                        httpStatusCode.value
-                    )
+    }
+    delete("post/attachment") {
+        var httpStatusCode = HttpStatusCode.OK
+        val attachmentId = call.request.queryParameters["attachmentId"]
+            ?: throw IllegalArgumentException("attachmentId can't be empty")
+        val referenceId =
+            call.request.queryParameters["referenceId"] ?: throw IllegalArgumentException("referenceId can't be empty")
+        val result = attachmentRepository.removeAttachment(attachmentId, referenceId)
+        if (result.isSuccess) {
+            call.respond(
+                httpStatusCode, WebResponse(
+                    httpStatusCode.description,
+                    result.getOrNull(),
+                    httpStatusCode.value
                 )
-            } else {
-                httpStatusCode = HttpStatusCode.NotAcceptable
-                call.respond(
-                    httpStatusCode,
-                    WebResponse(
-                        httpStatusCode.description,
-                        result.exceptionOrNull()?.cause?.localizedMessage,
-                        httpStatusCode.value
-                    )
+            )
+        } else {
+            httpStatusCode = HttpStatusCode.NotAcceptable
+            call.respond(
+                httpStatusCode,
+                WebResponse(
+                    httpStatusCode.description,
+                    result.exceptionOrNull()?.cause?.localizedMessage,
+                    httpStatusCode.value
                 )
-            }
+            )
         }
     }
 }

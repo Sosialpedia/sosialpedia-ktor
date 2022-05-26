@@ -1,6 +1,6 @@
 package id.sosialpedia.plugins
 
-import id.sosialpedia.chatwebsocket.helper.ChatSession
+import id.sosialpedia.chats.helper.ChatSession
 import io.ktor.server.application.*
 import io.ktor.server.application.ApplicationCallPipeline.ApplicationPhase.Plugins
 import io.ktor.server.sessions.*

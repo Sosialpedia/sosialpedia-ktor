@@ -13,6 +13,6 @@ data class UserInfoRequest(
     val phoneNumber: String,
     val profilePicture: String,
     val bio: String,
-    val dateBirth: String,
+    val dateBirth: Long,
     val gender: String
 )

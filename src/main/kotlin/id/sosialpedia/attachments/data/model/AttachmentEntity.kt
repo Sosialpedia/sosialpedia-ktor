@@ -2,9 +2,7 @@ package id.sosialpedia.attachments.data.model
 
 import id.sosialpedia.comments.data.model.ChildCommentsEntity
 import id.sosialpedia.comments.data.model.CommentsEntity
-import id.sosialpedia.comments.domain.model.ChildComment
 import id.sosialpedia.posts.data.model.PostsEntity
-import id.sosialpedia.users.data.model.Users
 import org.jetbrains.exposed.sql.Table
 
 /**

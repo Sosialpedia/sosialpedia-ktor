@@ -5,12 +5,11 @@ import id.sosialpedia.attachments.domain.AttachmentRepository
 import id.sosialpedia.attachments.domain.model.Attachment
 import id.sosialpedia.attachments.routes.model.CreateAttachmentRequest
 import id.sosialpedia.util.toShuffledMD5
-import io.ktor.network.tls.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import java.util.UUID
+import java.util.*
 
 /**
  * @author Samuel Mareno

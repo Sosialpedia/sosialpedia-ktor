@@ -8,7 +8,6 @@ import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import java.time.LocalDateTime
 import java.util.*
 
 /**
@@ -24,7 +23,7 @@ class ReactionRepositoryImpl(private val db: Database) : ReactionRepository {
                     it[id] = UUID.randomUUID().toShuffledMD5(20)
                     it[LikesEntity.postId] = postId
                     it[LikesEntity.userId] = userId
-                    it[createdAt] = LocalDateTime.now()
+                    it[createdAt] = System.currentTimeMillis()
                 }
                 Result.success("Successfully added")
             } catch (e: Exception) {
@@ -51,7 +50,7 @@ class ReactionRepositoryImpl(private val db: Database) : ReactionRepository {
                     it[id] = UUID.randomUUID().toShuffledMD5(20)
                     it[LikesEntity.commentId] = commentId
                     it[LikesEntity.userId] = userId
-                    it[createdAt] = LocalDateTime.now()
+                    it[createdAt] = System.currentTimeMillis()
                 }
                 Result.success("Successfully added")
             } catch (e: Exception) {

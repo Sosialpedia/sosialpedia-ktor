@@ -1,4 +1,4 @@
-package id.sosialpedia.chatwebsocket.helper
+package id.sosialpedia.chats.helper
 
 /**
  * @author Samuel Mareno

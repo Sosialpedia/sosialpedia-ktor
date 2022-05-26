@@ -1,14 +1,11 @@
 package id.sosialpedia
 
-import id.sosialpedia.attachments.routes.configureAttachmentRoutes
-import id.sosialpedia.chatwebsocket.routes.configureChats
-import id.sosialpedia.comments.routes.configureCommentsRouting
+import id.sosialpedia.comments.di.commentsModule
 import id.sosialpedia.di.mainModule
 import id.sosialpedia.plugins.*
-import id.sosialpedia.posts.routes.configurePostsRouting
+import id.sosialpedia.posts.di.postsModule
 import id.sosialpedia.reaction.di.reactionModule
-import id.sosialpedia.reaction.routes.configureReactionRoutes
-import id.sosialpedia.users.routes.configureUsersRouting
+import id.sosialpedia.users.di.usersModule
 import io.ktor.server.application.*
 import org.koin.ktor.plugin.Koin
 
@@ -20,20 +17,20 @@ fun main(args: Array<String>) {
 fun Application.module() {
 
     install(Koin) {
-        modules(mainModule, reactionModule)
+        modules(
+            reactionModule,
+            mainModule(this@module.environment),
+            usersModule,
+            postsModule,
+            commentsModule
+        )
     }
 
+    configureSockets()
     configureRouting()
-    configureUsersRouting()
-    configurePostsRouting()
-    configureCommentsRouting()
-    configureReactionRoutes()
-    configureAttachmentRoutes()
-    configureChats()
     configureStatusPages()
     configureSecurity()
     configureHTTP()
     configureMonitoring()
     configureSerialization()
-    configureSockets()
 }

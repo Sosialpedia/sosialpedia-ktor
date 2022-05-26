@@ -7,7 +7,7 @@ data class Comment(
     val content: String,
     val postId: String,
     val haveAttachment: Boolean,
-    val createdAt: String,
+    val createdAt: Long,
     val totalLike: Int = 0,
     val totalDislike: Int = 0,
     val totalChildComment: Int = 0

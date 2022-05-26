@@ -4,9 +4,6 @@ import org.jetbrains.exposed.sql.transactions.TransactionManager
 import java.math.BigInteger
 import java.security.MessageDigest
 import java.sql.ResultSet
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 /**
@@ -24,25 +21,6 @@ fun UUID.toShuffledMD5(length: Int): String {
             it.shuffle()
         }
     return String(chars)
-}
-
-@Deprecated("use toFormattedString instead",
-    ReplaceWith("toFormattedString()")
-)
-fun LocalDateTime.toMills(): Long {
-    return atZone(ZoneId.of("Asia/Jakarta"))
-        .toInstant()
-        .toEpochMilli()
-}
-
-fun LocalDateTime.toFormattedString(): String {
-    val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")
-    return format(formatter)
-}
-
-fun String.toLocalDateTime(): LocalDateTime {
-    val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")
-    return LocalDateTime.parse(this, formatter)
 }
 
 fun <T : Any> String.execAndMap(transform: (ResultSet) -> T): List<T> {

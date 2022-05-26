@@ -1,4 +1,4 @@
-package id.sosialpedia.chatwebsocket.domain.model
+package id.sosialpedia.chats.messages.domain.model
 
 /**
  * @author Samuel Mareno
@@ -8,9 +8,9 @@ package id.sosialpedia.chatwebsocket.domain.model
 data class Message(
     val id: String,
     val roomId: String,
-    val username: String,
+    val userId: String,
     val text: String,
     val isRead: Boolean,
     val isReceived: Boolean,
-    val timestamp: Long
+    val createdAt: Long
 )

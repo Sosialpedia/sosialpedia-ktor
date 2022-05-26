@@ -8,20 +8,18 @@ import id.sosialpedia.posts.domain.model.Post
 import id.sosialpedia.posts.routes.model.CreatePostRequest
 import id.sosialpedia.reaction.data.model.DislikesEntity
 import id.sosialpedia.reaction.data.model.LikesEntity
-import id.sosialpedia.users.data.model.Users
-import id.sosialpedia.util.toFormattedString
+import id.sosialpedia.users.data.model.UsersEntity
 import id.sosialpedia.util.toShuffledMD5
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import java.time.LocalDateTime
 import java.util.*
 
 class PostRepositoryImpl(private val db: Database) : PostRepository {
 
     override suspend fun getAllPostByUserId(userId: String): List<Post> {
         return newSuspendedTransaction {
-            val result = (PostsEntity innerJoin Users)
+            val result = (PostsEntity innerJoin UsersEntity)
                 .select {
                     PostsEntity.userId eq userId
                 }.sortedBy {
@@ -58,7 +56,7 @@ class PostRepositoryImpl(private val db: Database) : PostRepository {
                     userId = it[PostsEntity.userId],
                     content = it[PostsEntity.content],
                     haveAttachment = it[PostsEntity.haveAttach],
-                    createdAt = it[PostsEntity.createdAt].toFormattedString(),
+                    createdAt = it[PostsEntity.createdAt],
                     totalLike = totalLike,
                     totalDislike = totalDislike,
                     totalComment = totalComment + totalChildComment
@@ -75,7 +73,7 @@ class PostRepositoryImpl(private val db: Database) : PostRepository {
                     it[userId] = postRequest.userId
                     it[content] = postRequest.content
                     it[haveAttach] = postRequest.haveAttachment
-                    it[createdAt] = LocalDateTime.now()
+                    it[createdAt] = System.currentTimeMillis()
                 }
                 val post = insert.resultedValues!!.map {
                     Post(
@@ -83,7 +81,7 @@ class PostRepositoryImpl(private val db: Database) : PostRepository {
                         userId = it[PostsEntity.userId],
                         content = it[PostsEntity.content],
                         haveAttachment = it[PostsEntity.haveAttach],
-                        createdAt = it[PostsEntity.createdAt].toFormattedString()
+                        createdAt = it[PostsEntity.createdAt]
                     )
                 }.first()
                 Result.success(post)

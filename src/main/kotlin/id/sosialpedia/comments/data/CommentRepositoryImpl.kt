@@ -11,12 +11,10 @@ import id.sosialpedia.posts.data.model.PostsEntity
 import id.sosialpedia.reaction.data.model.DislikesEntity
 import id.sosialpedia.reaction.data.model.LikesEntity
 import id.sosialpedia.util.execAndMap
-import id.sosialpedia.util.toFormattedString
 import id.sosialpedia.util.toShuffledMD5
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import java.time.LocalDateTime
 import java.util.*
 
 class CommentRepositoryImpl(private val db: Database) : CommentRepository {
@@ -53,7 +51,7 @@ class CommentRepositoryImpl(private val db: Database) : CommentRepository {
                         content = it[CommentsEntity.content],
                         postId = it[PostsEntity.id],
                         haveAttachment = it[CommentsEntity.haveAttach],
-                        createdAt = it[CommentsEntity.createdAt].toFormattedString(),
+                        createdAt = it[CommentsEntity.createdAt],
                         totalLike = totalLike,
                         totalDislike = totalDislike,
                         totalChildComment = totalChildComment
@@ -75,7 +73,7 @@ class CommentRepositoryImpl(private val db: Database) : CommentRepository {
                     it[content] = commentRequest.content
                     it[postId] = commentRequest.postId
                     it[haveAttach] = commentRequest.haveAttachment
-                    it[createdAt] = LocalDateTime.now()
+                    it[createdAt] = System.currentTimeMillis()
                 }
                 val result = insert.resultedValues!!.map {
                     Comment(
@@ -84,7 +82,7 @@ class CommentRepositoryImpl(private val db: Database) : CommentRepository {
                         content = it[CommentsEntity.content],
                         postId = it[CommentsEntity.postId],
                         haveAttachment = it[CommentsEntity.haveAttach],
-                        createdAt = it[CommentsEntity.createdAt].toFormattedString()
+                        createdAt = it[CommentsEntity.createdAt]
                     )
                 }.first()
                 Result.success(result)
@@ -124,7 +122,7 @@ class CommentRepositoryImpl(private val db: Database) : CommentRepository {
                             commentId = it[ChildCommentsEntity.commentId],
                             content = it[ChildCommentsEntity.content],
                             haveAttachment = it[ChildCommentsEntity.haveAttach],
-                            createdAt = it[ChildCommentsEntity.createdAt].toFormattedString()
+                            createdAt = it[ChildCommentsEntity.createdAt]
                         )
                     }
                 Result.success(result)
@@ -144,7 +142,7 @@ class CommentRepositoryImpl(private val db: Database) : CommentRepository {
                     it[content] = childCommentRequest.content
                     it[commentId] = childCommentRequest.commentId
                     it[haveAttach] = childCommentRequest.haveAttachment
-                    it[createdAt] = LocalDateTime.now()
+                    it[createdAt] = System.currentTimeMillis()
                 }
                 val result = insert.resultedValues!!.map {
                     ChildComment(
@@ -154,7 +152,7 @@ class CommentRepositoryImpl(private val db: Database) : CommentRepository {
                         content = it[ChildCommentsEntity.content],
                         commentId = it[ChildCommentsEntity.commentId],
                         haveAttachment = it[ChildCommentsEntity.haveAttach],
-                        createdAt = it[ChildCommentsEntity.createdAt].toFormattedString()
+                        createdAt = it[ChildCommentsEntity.createdAt]
                     )
                 }.first()
                 Result.success(result)

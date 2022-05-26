@@ -12,9 +12,9 @@ data class CreateUserRequest(
     val phoneNumber: String,
     val profilePic: String? = null,
     val bio: String = "",
-    val dateBirth: String,
+    val dateBirth: Long,
     val gender: String,
-    val lastLogin: String? = null,
+    val lastLogin: Long? = null,
     val ipAddress: String,
     val device: String? = null
 )

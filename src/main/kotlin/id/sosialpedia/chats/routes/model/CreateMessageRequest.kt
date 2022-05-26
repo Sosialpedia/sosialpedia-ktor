@@ -1,11 +1,14 @@
-package id.sosialpedia.chatwebsocket.routes.model
+package id.sosialpedia.chats.routes.model
+
+import kotlinx.serialization.Serializable
 
 /**
  * @author Samuel Mareno
  * @Date 03/05/22
  */
+@Serializable
 data class CreateMessageRequest(
+    val userId: String,
     val roomId: String,
-    val username: String,
     val text: String
 )

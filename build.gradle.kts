@@ -8,6 +8,7 @@ plugins {
     application
     kotlin("jvm") version "1.6.10"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.6.10"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 group = "id.sosialpedia"
@@ -50,7 +51,6 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
 
     // SQL Driver
-    implementation("mysql:mysql-connector-java:8.0.28")
     implementation("org.postgresql:postgresql:42.2.2")
 
     // Koin Dependency Injection
