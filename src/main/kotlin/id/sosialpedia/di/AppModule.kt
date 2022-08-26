@@ -14,10 +14,10 @@ import org.koin.dsl.module
 fun mainModule(environment: ApplicationEnvironment): org.koin.core.module.Module {
     return module {
         single {
-            val username = environment.config.property("db.username").getString()
-            val password = environment.config.property("db.password").getString()
+            val username = "reno"//environment.config.property("db.username").getString()
+            val password = "shalom7007" //environment.config.property("db.password").getString()
             Database.connect(
-                "jdbc:postgresql://localhost:5432/my_postgres", driver = "org.postgresql.Driver",
+                "jdbc:postgresql://localhost:1234/sosialpedia_db", driver = "org.postgresql.Driver",
                 user = username, password = password
             )
         }

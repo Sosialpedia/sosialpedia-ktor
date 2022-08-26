@@ -1,5 +1,6 @@
 package id.sosialpedia.users.data
 
+import id.sosialpedia.users.data.model.Gender
 import id.sosialpedia.users.data.model.UsersEntity
 import id.sosialpedia.users.domain.UserRepository
 import id.sosialpedia.users.domain.model.User
@@ -28,7 +29,7 @@ class UserRepositoryImpl(private val db: Database) : UserRepository {
                         profilePic = it[UsersEntity.profilePic],
                         bio = it[UsersEntity.bio],
                         dateBirth = it[UsersEntity.dateBirth],
-                        gender = it[UsersEntity.gender],
+                        gender = it[UsersEntity.gender].name,
                         createdAt = it[UsersEntity.createdAt],
                         updatedAt = it[UsersEntity.updatedAt],
                         lastLogin = it[UsersEntity.lastLogin],
@@ -56,7 +57,7 @@ class UserRepositoryImpl(private val db: Database) : UserRepository {
                         profilePic = it[UsersEntity.profilePic],
                         bio = it[UsersEntity.bio],
                         dateBirth = it[UsersEntity.dateBirth],
-                        gender = it[UsersEntity.gender],
+                        gender = it[UsersEntity.gender].name,
                         createdAt = it[UsersEntity.createdAt],
                         updatedAt = it[UsersEntity.updatedAt],
                         lastLogin = it[UsersEntity.lastLogin],
@@ -84,7 +85,7 @@ class UserRepositoryImpl(private val db: Database) : UserRepository {
                     it[profilePic] = createUserRequest.profilePic
                     it[bio] = createUserRequest.bio
                     it[dateBirth] = createUserRequest.dateBirth
-                    it[gender] = createUserRequest.gender
+                    it[gender] = Gender.Male
                     it[createdAt] = System.currentTimeMillis()
                     it[updatedAt] = null
                     it[lastLogin] = System.currentTimeMillis()
@@ -100,7 +101,7 @@ class UserRepositoryImpl(private val db: Database) : UserRepository {
                         profilePic = it[UsersEntity.profilePic],
                         bio = it[UsersEntity.bio],
                         dateBirth = it[UsersEntity.dateBirth],
-                        gender = it[UsersEntity.gender],
+                        gender = it[UsersEntity.gender].name,
                         createdAt = it[UsersEntity.createdAt],
                         updatedAt = null,
                         lastLogin = it[UsersEntity.lastLogin],
@@ -140,7 +141,7 @@ class UserRepositoryImpl(private val db: Database) : UserRepository {
                     it[profilePic] = userInfoRequest.profilePicture
                     it[bio] = userInfoRequest.bio
                     it[dateBirth] = userInfoRequest.dateBirth
-                    it[gender] = userInfoRequest.gender
+                    it[gender] = Gender.valueOf(userInfoRequest.gender)
                 }
                 Result.success("Successfully updated")
             } catch (e: Exception) {

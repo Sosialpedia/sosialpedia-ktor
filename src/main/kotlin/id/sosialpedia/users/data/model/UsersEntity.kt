@@ -15,7 +15,7 @@ object UsersEntity : Table("users") {
     val phoneNumber = varchar("phone_number", 50)
     val bio = text("bio").nullable()
     val dateBirth = long("date_birth")
-    val gender = varchar("gender", 14)
+    val gender = enumerationByName<Gender>("gender", 10)
     val createdAt = long("created_at")
     val updatedAt = long("updated_at").nullable()
     val lastLogin = long("last_login").nullable()

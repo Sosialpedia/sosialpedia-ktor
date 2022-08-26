@@ -57,4 +57,6 @@ dependencies {
     implementation("io.insert-koin:koin-ktor:$koinVersion")
 
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktorVersion")
+    testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
 }
