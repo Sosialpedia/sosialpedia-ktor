@@ -6,8 +6,8 @@ val koinVersion: String by project
 
 plugins {
     application
-    kotlin("jvm") version "1.6.10"
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.6.10"
+    kotlin("jvm") version "1.7.10"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.7.10"
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
@@ -51,7 +51,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
 
     // SQL Driver
-    implementation("org.postgresql:postgresql:42.2.2")
+    implementation("org.postgresql:postgresql:42.4.2")
 
     // Koin Dependency Injection
     implementation("io.insert-koin:koin-ktor:$koinVersion")

@@ -6,11 +6,9 @@ import id.sosialpedia.users.domain.UserRepository
 import id.sosialpedia.users.domain.model.User
 import id.sosialpedia.users.routes.model.CreateUserRequest
 import id.sosialpedia.users.routes.model.UserInfoRequest
-import id.sosialpedia.util.toShuffledMD5
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import java.util.*
 
 /**
  * @author Samuel Mareno
@@ -77,7 +75,7 @@ class UserRepositoryImpl(private val db: Database) : UserRepository {
         return try {
             newSuspendedTransaction {
                 val insert = UsersEntity.insert {
-                    it[id] = UUID.randomUUID().toShuffledMD5(16)
+                    it[id] = createUserRequest.id
                     it[username] = createUserRequest.username
                     it[email] = createUserRequest.email
                     it[password] = createUserRequest.password
@@ -85,7 +83,7 @@ class UserRepositoryImpl(private val db: Database) : UserRepository {
                     it[profilePic] = createUserRequest.profilePic
                     it[bio] = createUserRequest.bio
                     it[dateBirth] = createUserRequest.dateBirth
-                    it[gender] = Gender.Male
+                    it[gender] = Gender.valueOf(createUserRequest.gender)
                     it[createdAt] = System.currentTimeMillis()
                     it[updatedAt] = null
                     it[lastLogin] = System.currentTimeMillis()
