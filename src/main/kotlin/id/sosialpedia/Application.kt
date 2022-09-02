@@ -5,6 +5,9 @@ import id.sosialpedia.di.mainModule
 import id.sosialpedia.plugins.*
 import id.sosialpedia.posts.di.postsModule
 import id.sosialpedia.reaction.di.reactionModule
+import id.sosialpedia.security.hashing.SHA256HashingService
+import id.sosialpedia.security.token.JwtTokenService
+import id.sosialpedia.security.token.TokenConfig
 import id.sosialpedia.users.di.usersModule
 import io.ktor.server.application.*
 import org.koin.ktor.plugin.Koin
@@ -26,10 +29,19 @@ fun Application.module() {
         )
     }
 
+    val tokenService = JwtTokenService()
+    val tokenConfig = TokenConfig(
+        issuer = environment.config.property("jwt.issuer").getString(),
+        audience = environment.config.property("jwt.audience").getString(),
+        expiresIn = 365L * 1000L * 60L * 60L * 24L,
+        secret = System.getenv("JWT_SECRET")
+    )
+    val hashingService = SHA256HashingService()
+
     configureSockets()
-    configureRouting()
+    configureRouting(hashingService, tokenService, tokenConfig)
     configureStatusPages()
-    configureSecurity()
+    configureSecurity(config = tokenConfig)
     configureHTTP()
     configureMonitoring()
     configureSerialization()

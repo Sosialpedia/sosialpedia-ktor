@@ -3,6 +3,7 @@ val kotlinVersion: String by project
 val logbackVersion: String by project
 val exposedVersion: String by project
 val koinVersion: String by project
+val commons_codec_version: String by project
 
 plugins {
     application
@@ -42,7 +43,13 @@ dependencies {
     implementation("io.ktor:ktor-network-tls-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-websockets-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-server-auth:$ktorVersion")
+    implementation("io.ktor:ktor-server-auth-jwt:$ktorVersion")
+    implementation("io.ktor:ktor-server-auth-jvm:2.1.0")
+    implementation("io.ktor:ktor-server-auth-jwt-jvm:2.1.0")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
+
+    implementation("commons-codec:commons-codec:$commons_codec_version")
 
     // Exposed
     implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")

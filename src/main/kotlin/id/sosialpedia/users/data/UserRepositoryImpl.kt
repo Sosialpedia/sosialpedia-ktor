@@ -24,6 +24,8 @@ class UserRepositoryImpl(private val db: Database) : UserRepository {
                         username = it[UsersEntity.username],
                         email = it[UsersEntity.email],
                         phoneNumber = it[UsersEntity.phoneNumber],
+                        password = it[UsersEntity.password],
+                        salt = it[UsersEntity.salt],
                         profilePic = it[UsersEntity.profilePic],
                         bio = it[UsersEntity.bio],
                         dateBirth = it[UsersEntity.dateBirth],
@@ -52,6 +54,8 @@ class UserRepositoryImpl(private val db: Database) : UserRepository {
                         username = it[UsersEntity.username],
                         email = it[UsersEntity.email],
                         phoneNumber = it[UsersEntity.phoneNumber],
+                        password = it[UsersEntity.password],
+                        salt = it[UsersEntity.salt],
                         profilePic = it[UsersEntity.profilePic],
                         bio = it[UsersEntity.bio],
                         dateBirth = it[UsersEntity.dateBirth],
@@ -71,6 +75,38 @@ class UserRepositoryImpl(private val db: Database) : UserRepository {
         }
     }
 
+    override suspend fun getUserByUsername(username: String): User? {
+        return newSuspendedTransaction {
+            try {
+                val resultRow = UsersEntity
+                    .select(UsersEntity.username eq username).firstOrNull()
+                if (resultRow == null) {
+                    null
+                } else {
+                    User(
+                        id = resultRow[UsersEntity.id],
+                        username = resultRow[UsersEntity.username],
+                        email = resultRow[UsersEntity.email],
+                        phoneNumber = resultRow[UsersEntity.phoneNumber],
+                        password = resultRow[UsersEntity.password],
+                        salt = resultRow[UsersEntity.salt],
+                        profilePic = resultRow[UsersEntity.profilePic],
+                        bio = resultRow[UsersEntity.bio],
+                        dateBirth = resultRow[UsersEntity.dateBirth],
+                        gender = resultRow[UsersEntity.gender].name,
+                        createdAt = resultRow[UsersEntity.createdAt],
+                        updatedAt = resultRow[UsersEntity.updatedAt],
+                        lastLogin = resultRow[UsersEntity.lastLogin],
+                        ipAddress = resultRow[UsersEntity.ipAddress] ?: "can't retrieve Ip Address",
+                        device = resultRow[UsersEntity.device]
+                    )
+                }
+            } catch (e: Exception) {
+                null
+            }
+        }
+    }
+
     override suspend fun registerUser(createUserRequest: CreateUserRequest): Result<User> {
         return try {
             newSuspendedTransaction {
@@ -79,6 +115,7 @@ class UserRepositoryImpl(private val db: Database) : UserRepository {
                     it[username] = createUserRequest.username
                     it[email] = createUserRequest.email
                     it[password] = createUserRequest.password
+                    it[salt] = createUserRequest.salt
                     it[phoneNumber] = createUserRequest.phoneNumber
                     it[profilePic] = createUserRequest.profilePic
                     it[bio] = createUserRequest.bio
@@ -95,6 +132,8 @@ class UserRepositoryImpl(private val db: Database) : UserRepository {
                         id = it[UsersEntity.id],
                         username = it[UsersEntity.username],
                         email = it[UsersEntity.email],
+                        password = it[UsersEntity.password],
+                        salt = it[UsersEntity.salt],
                         phoneNumber = it[UsersEntity.phoneNumber],
                         profilePic = it[UsersEntity.profilePic],
                         bio = it[UsersEntity.bio],

@@ -5,20 +5,25 @@ import id.sosialpedia.chats.routes.configureChats
 import id.sosialpedia.comments.routes.configureCommentsRouting
 import id.sosialpedia.posts.routes.configurePostsRouting
 import id.sosialpedia.reaction.routes.configureReactionRoutes
-import id.sosialpedia.users.routes.configureUsersRouting
+import id.sosialpedia.security.hashing.HashingService
+import id.sosialpedia.security.token.TokenConfig
+import id.sosialpedia.security.token.TokenService
+import id.sosialpedia.users.routes.*
 import io.ktor.server.application.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Application.configureRouting() {
+fun Application.configureRouting(
+    hashingService: HashingService,
+    tokenService: TokenService,
+    tokenConfig: TokenConfig
+) {
 
     routing {
-
-        //test purpose
-        get("/") {
-           call.respond("Hello World!")
-        }
-        configureUsersRouting()
+        userRegister(hashingService)
+        userLogin(hashingService, tokenService, tokenConfig)
+        authenticateUser()
+        getSecretInfo()
+        usersConfig()
         configurePostsRouting()
         configureCommentsRouting()
         configureReactionRoutes()

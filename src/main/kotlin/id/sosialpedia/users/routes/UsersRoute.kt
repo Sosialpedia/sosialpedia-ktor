@@ -1,11 +1,9 @@
 package id.sosialpedia.users.routes
 
 import id.sosialpedia.users.domain.UserRepository
-import id.sosialpedia.users.routes.model.CreateUserRequest
 import id.sosialpedia.util.WebResponse
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.java.KoinJavaComponent.inject
@@ -14,7 +12,8 @@ import org.koin.java.KoinJavaComponent.inject
  * @author Samuel Mareno
  * @Date 12/04/22
  */
-fun Route.configureUsersRouting() {
+fun Route.usersConfig() {
+
     val userRepository by inject<UserRepository>(UserRepository::class.java)
 
     get("/users") {
@@ -66,31 +65,7 @@ fun Route.configureUsersRouting() {
             )
         }
     }
-    post("user/register") {
-        var httpStatusCode = HttpStatusCode.Created
-        val createUserRequest = call.receive<CreateUserRequest>()
-        val result = userRepository.registerUser(createUserRequest)
-        if (result.isSuccess) {
-            call.respond(
-                httpStatusCode,
-                WebResponse(
-                    httpStatusCode.description,
-                    result.getOrNull(),
-                    httpStatusCode.value
-                )
-            )
-        } else {
-            httpStatusCode = HttpStatusCode.NotAcceptable
-            call.respond(
-                httpStatusCode,
-                WebResponse(
-                    httpStatusCode.description,
-                    result.exceptionOrNull()?.cause?.localizedMessage,
-                    httpStatusCode.value
-                )
-            )
-        }
-    }
+
     put("user/upd4t3l0g1n/{userId}") {
         val userId = call.parameters["userId"] ?: throw IllegalArgumentException("userId can't be empty")
         val result = userRepository.updateUserLogin(
