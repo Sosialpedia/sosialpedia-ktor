@@ -45,10 +45,10 @@ class UserRepositoryImpl(private val db: Database) : UserRepository {
         }
     }
 
-    override suspend fun getUserById(id: String): Result<List<User>> {
+    override suspend fun getUserById(userId: String): User? {
         return newSuspendedTransaction(db = db) {
             try {
-                val result = UsersEntity.select(UsersEntity.id eq id).map {
+                val users = UsersEntity.select(UsersEntity.id eq userId).map {
                     User(
                         id = it[UsersEntity.id],
                         username = it[UsersEntity.username],
@@ -67,9 +67,9 @@ class UserRepositoryImpl(private val db: Database) : UserRepository {
                         device = it[UsersEntity.device]
                     )
                 }
-                Result.success(result)
+                users[0]
             } catch (e: Exception) {
-                Result.failure(e)
+                null
             }
 
         }

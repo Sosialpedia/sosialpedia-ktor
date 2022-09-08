@@ -14,7 +14,7 @@ import org.koin.java.KoinJavaComponent.inject
  * @author Samuel Mareno
  * @Date 12/04/22
  */
-fun Route.configurePostsRouting() {
+fun Route.postConfig() {
     val postUserRepository by inject<PostRepository>(PostRepository::class.java)
 
     get("/posts") {

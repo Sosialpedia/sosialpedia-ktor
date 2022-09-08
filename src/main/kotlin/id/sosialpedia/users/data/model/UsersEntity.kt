@@ -10,7 +10,7 @@ import org.jetbrains.exposed.sql.Table
 object UsersEntity : Table("users") {
     val id: Column<String> = varchar("id", 16).uniqueIndex()
     val username = varchar("username", 50).uniqueIndex()
-    val email = varchar("email", 100).uniqueIndex()
+    val email = varchar("email", 100).nullable().uniqueIndex()
     val password = varchar("password", 65)
     val salt = varchar("salt", 64)
     val phoneNumber = varchar("phone_number", 50)

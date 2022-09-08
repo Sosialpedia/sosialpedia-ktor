@@ -11,7 +11,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.java.KoinJavaComponent.inject
 
-fun Route.configureCommentsRouting() {
+fun Route.commentConfig() {
     val commentRepository by inject<CommentRepository>(CommentRepository::class.java)
 
     get("/comments") {

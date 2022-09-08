@@ -1,23 +1,20 @@
 package id.sosialpedia.users.routes.model
 
-import id.sosialpedia.util.toShuffledMD5
-import java.util.UUID
-
 /**
  * @author Samuel Mareno
  * @Date 12/04/22
  */
 @kotlinx.serialization.Serializable
 data class CreateUserRequest(
-    val id: String = UUID.randomUUID().toShuffledMD5(16),
+    val id: String = "",
     val username: String,
-    val email: String,
+    val email: String? = null,
     val password: String,
     val salt: String = "",
     val phoneNumber: String = "",
     val profilePic: String? = null,
     val bio: String = "",
-    val dateBirth: Long,
+    val dateBirth: Long = 0L,
     val gender: String,
     val lastLogin: Long? = null,
     val ipAddress: String,

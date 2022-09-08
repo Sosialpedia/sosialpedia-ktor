@@ -2,8 +2,8 @@ package id.sosialpedia.plugins
 
 import id.sosialpedia.attachments.routes.configureAttachmentRoutes
 import id.sosialpedia.chats.routes.configureChats
-import id.sosialpedia.comments.routes.configureCommentsRouting
-import id.sosialpedia.posts.routes.configurePostsRouting
+import id.sosialpedia.comments.routes.commentConfig
+import id.sosialpedia.posts.routes.postConfig
 import id.sosialpedia.reaction.routes.configureReactionRoutes
 import id.sosialpedia.security.hashing.HashingService
 import id.sosialpedia.security.token.TokenConfig
@@ -23,9 +23,9 @@ fun Application.configureRouting(
         userLogin(hashingService, tokenService, tokenConfig)
         authenticateUser()
         getSecretInfo()
-        usersConfig()
-        configurePostsRouting()
-        configureCommentsRouting()
+        userConfig()
+        postConfig()
+        commentConfig()
         configureReactionRoutes()
         configureAttachmentRoutes()
         configureChats()

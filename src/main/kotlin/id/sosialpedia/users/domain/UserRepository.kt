@@ -12,7 +12,7 @@ interface UserRepository {
 
     suspend fun getAllUsers(): Result<List<User>>
 
-    suspend fun getUserById(id: String): Result<List<User>>
+    suspend fun getUserById(userId: String): User?
 
     suspend fun getUserByUsername(username: String): User?
 

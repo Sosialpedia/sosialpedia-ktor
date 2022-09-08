@@ -12,7 +12,7 @@ import org.koin.java.KoinJavaComponent.inject
  * @author Samuel Mareno
  * @Date 12/04/22
  */
-fun Route.usersConfig() {
+fun Route.userConfig() {
 
     val userRepository by inject<UserRepository>(UserRepository::class.java)
 

@@ -14,7 +14,7 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import org.koin.java.KoinJavaComponent
+import org.koin.java.KoinJavaComponent.inject
 
 /**
  * @author Samuel Mareno
@@ -26,7 +26,7 @@ fun Route.userLogin(
     tokenService: TokenService,
     tokenConfig: TokenConfig
 ) {
-    val userRepository by KoinJavaComponent.inject<UserRepository>(UserRepository::class.java)
+    val userRepository by inject<UserRepository>(UserRepository::class.java)
 
     post("user/signin") {
         var httpStatusCode = HttpStatusCode.OK
@@ -39,13 +39,15 @@ fun Route.userLogin(
         val passwordIsShort = request.password.length < 8
 
         if (usernameIsEmpty || passwordIsShort) {
-            call.respond(HttpStatusCode.BadRequest)
+            httpStatusCode = HttpStatusCode.BadRequest
+            call.respond(httpStatusCode)
             return@post
         }
 
         val user = userRepository.getUserByUsername(request.username) ?: kotlin.run {
-            httpStatusCode = HttpStatusCode.Conflict
+            httpStatusCode = HttpStatusCode.BadRequest
             call.respond(
+                httpStatusCode,
                 WebResponse(
                     httpStatusCode.description,
                     listOf("User is not found"),
@@ -64,6 +66,7 @@ fun Route.userLogin(
         if (!isValidPassword) {
             httpStatusCode = HttpStatusCode.Conflict
             call.respond(
+                httpStatusCode,
                 WebResponse(
                     httpStatusCode.description,
                     listOf("Username or password is invalid"),
@@ -77,10 +80,6 @@ fun Route.userLogin(
                 TokenClaim(
                     name = "userId",
                     value = user.id
-                ),
-                TokenClaim(
-                    name = "username",
-                    value = user.username
                 )
             )
             call.respond(httpStatusCode, AuthResponse(token))

@@ -8,7 +8,7 @@ package id.sosialpedia.users.domain.model
 data class User(
     val id: String,
     val username: String,
-    val email: String,
+    val email: String?,
     val password: String,
     val salt: String,
     val phoneNumber: String,
