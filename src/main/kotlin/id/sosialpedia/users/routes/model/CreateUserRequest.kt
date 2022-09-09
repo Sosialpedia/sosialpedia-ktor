@@ -15,7 +15,7 @@ data class CreateUserRequest(
     val profilePic: String? = null,
     val bio: String = "",
     val dateBirth: Long = 0L,
-    val gender: String,
+    val gender: String = "NotSpecified",
     val lastLogin: Long? = null,
     val ipAddress: String,
     val device: String? = null
