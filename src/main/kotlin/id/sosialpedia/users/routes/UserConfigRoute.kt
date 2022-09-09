@@ -44,12 +44,12 @@ fun Route.userConfig() {
         var httpStatusCode = HttpStatusCode.OK
         val userId = call.parameters["userId"] ?: throw IllegalArgumentException("userId can't be empty")
         val result = userRepository.getUserById(userId)
-        if (result.isSuccess) {
+        if (result != null) {
             call.respond(
                 httpStatusCode,
                 WebResponse(
                     httpStatusCode.description,
-                    result.getOrNull(),
+                    listOf(result),
                     httpStatusCode.value
                 )
             )
@@ -59,7 +59,7 @@ fun Route.userConfig() {
                 httpStatusCode,
                 WebResponse(
                     httpStatusCode.description,
-                    result.exceptionOrNull()?.cause?.localizedMessage,
+                    listOf("User is not found"),
                     httpStatusCode.value
                 )
             )
