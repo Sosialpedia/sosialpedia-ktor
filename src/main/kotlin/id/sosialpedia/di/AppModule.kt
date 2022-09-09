@@ -17,7 +17,7 @@ fun mainModule(environment: ApplicationEnvironment): org.koin.core.module.Module
             val username = "reno"//environment.config.property("db.username").getString()
             val password = "shalom7007" //environment.config.property("db.password").getString()
             Database.connect(
-                "jdbc:postgresql://sosialpedia/sosialpedia_db", driver = "org.postgresql.Driver",
+                "jdbc:postgresql://sosialpedia_db/sosialpedia_db", driver = "org.postgresql.Driver",
                 user = username, password = password
             )
         }
