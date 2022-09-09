@@ -29,6 +29,14 @@ repositories {
     }
 }
 
+tasks {
+    shadowJar {
+        manifest {
+            attributes(Pair("Main-Class", "id.sosialpedia.Application.kt"))
+        }
+    }
+}
+
 dependencies {
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("io.ktor:ktor-server-status-pages:$ktorVersion")
