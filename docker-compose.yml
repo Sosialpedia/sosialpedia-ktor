@@ -4,12 +4,12 @@ services:
     image: nginx:latest
     ports:
       - "80:80"
-      - "443:443"
+      - "9090:9090"
     depends_on:
       - server-ktor
     restart: always
     volumes:
-      - /etc/nginx/conf/:/etc/nginx/conf.d/:ro
+      - /etc/nginx/conf.d/:/etc/nginx/conf.d/:ro
       - /certbot/www:/var/www/certbot/:ro
 
   certbot:
@@ -24,5 +24,5 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8181:80"
+      - "8081:80"
     restart: always

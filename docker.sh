@@ -4,5 +4,5 @@ docker network connect sosialpediaNetwork sosialpedia_db
 
 
 docker build -t sosialpedia:0.0.1 .
-docker container run -d -it --name sosialpedia -p 80:80 sosialpedia:0.0.1
+docker container run -d -it --name sosialpedia -p 80:80 sosialpedia
 
