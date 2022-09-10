@@ -20,6 +20,8 @@ services:
       - ./certbot/conf/:/etc/letsencrypt/:rw
 
   server-ktor:
+    networks:
+      - sosialpediaNetwork
     build:
       context: .
       dockerfile: Dockerfile
