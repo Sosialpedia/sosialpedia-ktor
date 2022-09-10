@@ -9,15 +9,15 @@ services:
       - server-ktor
     restart: always
     volumes:
-      - ./etc/nginx/conf/:/etc/nginx/conf.d/:ro
-      - ./certbot/www:/var/www/certbot/:ro
+      - /etc/nginx/conf/:/etc/nginx/conf.d/:ro
+      - /certbot/www:/var/www/certbot/:ro
 
   certbot:
     image: certbot/certbot:latest
     restart: always
     volumes:
-      - ./certbot/www/:/var/www/certbot/:rw
-      - ./certbot/conf/:/etc/letsencrypt/:rw
+      - /certbot/www/:/var/www/certbot/:rw
+      - /certbot/conf/:/etc/letsencrypt/:rw
 
   server-ktor:
     build:
