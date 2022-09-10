@@ -1,5 +1,5 @@
-FROM openjdk:11
-EXPOSE 80:80
+FROM openjdk:11-jdk-slim
+EXPOSE 80
 RUN mkdir /app
 ENV JWT_SECRET s3c123t
 COPY /build/libs/*.jar /app/sosialpedia.jar
