@@ -16,6 +16,10 @@ fun Route.userConfig() {
 
     val userRepository by inject<UserRepository>(UserRepository::class.java)
 
+    get("/") {
+        call.respond("Hello Ktor!")
+    }
+
     get("/users") {
         var httpStatusCode = HttpStatusCode.OK
         val result = userRepository.getAllUsers()
