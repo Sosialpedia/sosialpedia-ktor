@@ -1,17 +1,15 @@
 version: "1"
 services:
-
   nginx:
-    build:
-      image: nginx:latest
-      ports:
-        - "8080:8080"
-        - "8443:8443"
+    image: nginx:latest
+    ports:
+      - "8080:8080"
+      - "8443:8443"
     depends_on:
       - server-ktor
     restart: always
     volumes:
-      - ./nginx/conf/:/etc/nginx/conf.d/:ro
+      - ./etc/nginx/conf/:/etc/nginx/conf.d/:ro
       - ./certbot/www:/var/www/certbot/:ro
 
   certbot:
