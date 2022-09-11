@@ -1,7 +1,7 @@
 version: "1"
 services:
   nginx:
-    image: nginxinc/nginx-unprivileged:latest
+    image: ubuntu/nginx
     ports:
       - "80:8080"
       - "443:443"
@@ -10,7 +10,7 @@ services:
     restart: always
     volumes:
       - /etc/nginx/conf.d/:/etc/nginx/conf.d/:ro
-      - /certbot/www:/var/www/certbot/:ro
+      - /certbot/www:/var/www/certbot/:rw
 
   certbot:
     image: certbot/certbot:latest
