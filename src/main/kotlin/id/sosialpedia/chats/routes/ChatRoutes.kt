@@ -4,6 +4,7 @@ import id.sosialpedia.chats.rooms.RoomController
 import id.sosialpedia.chats.rooms.domain.RoomsDataSource
 import id.sosialpedia.chats.routes.model.CreateMessageRequest
 import id.sosialpedia.chats.util.UserNotInRoom
+import id.sosialpedia.users.domain.UserRepository
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
@@ -23,10 +24,14 @@ fun Route.configureChats() {
 
     val roomController by inject<RoomController>()
     val roomsDataSource by inject<RoomsDataSource>()
+    val userRepository by inject<UserRepository>()
     webSocket("/chat") {
 
         val userId = call.parameters["userId"] ?: throw IllegalArgumentException("userId can't be empty")
         println("Adding user! with userId: $userId and socket: $this")
+
+        userRepository.getUserById(userId) ?: throw IllegalArgumentException("userId isn't found")
+
         try {
             roomController.onJoin(userId, this)
             incoming.consumeEach { frame ->
