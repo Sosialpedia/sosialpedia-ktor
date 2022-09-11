@@ -9,7 +9,7 @@ services:
       - server-ktor
     restart: always
     volumes:
-      - /etc/nginx/conf.d/:/etc/nginx/conf.d/:ro
+      - /etc/nginx/conf.d/:/etc/nginx/conf.d/:rw
       - /certbot/www:/var/www/certbot/:rw
 
   certbot:
