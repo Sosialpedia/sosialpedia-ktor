@@ -1,11 +1,12 @@
 version: "1"
 services:
   sosialpedia_db:
-    image: postgres
-    volumes:
-      - /opt/sosialpedia/postgresdata/data:/var/lib/postgresql/data
+    image: postgres:14.5
     ports:
       - 1234:5432
+    environment:
+      - POSTGRES_USER=reno
+      - POSTGRES_PASSWORD=shalom7007
     restart: always
   sosialpedia_ktor:
     build:
@@ -13,4 +14,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8081:80"
+    environment:
+      - DB_USERNAME=reno
+      - DB_PASSWORD=shalom7007
+
     restart: always

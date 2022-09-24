@@ -22,7 +22,7 @@ fun Application.module() {
     install(Koin) {
         modules(
             reactionModule,
-            mainModule(this@module.environment),
+            mainModule(),
             usersModule,
             postsModule,
             commentsModule

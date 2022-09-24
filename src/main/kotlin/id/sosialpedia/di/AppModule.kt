@@ -7,15 +7,16 @@ import id.sosialpedia.chats.messages.domain.MessageDataSource
 import id.sosialpedia.chats.rooms.RoomController
 import id.sosialpedia.chats.rooms.data.RoomsDataSourceImpl
 import id.sosialpedia.chats.rooms.domain.RoomsDataSource
-import io.ktor.server.application.*
+import id.sosialpedia.users.data.UserRepositoryImpl
+import id.sosialpedia.users.domain.UserRepository
 import org.jetbrains.exposed.sql.Database
 import org.koin.dsl.module
 
-fun mainModule(environment: ApplicationEnvironment): org.koin.core.module.Module {
+fun mainModule(): org.koin.core.module.Module {
     return module {
         single {
-            val username = "reno"//environment.config.property("db.username").getString()
-            val password = "shalom7007" //environment.config.property("db.password").getString()
+            val username = System.getenv("DB_USERNAME").toString()
+            val password = System.getenv("DB_PASSWROD").toString()
             Database.connect(
                 "jdbc:postgresql://sosialpedia_db/sosialpedia_db", driver = "org.postgresql.Driver",
                 user = username, password = password
@@ -23,6 +24,7 @@ fun mainModule(environment: ApplicationEnvironment): org.koin.core.module.Module
         }
         single<AttachmentRepository> { AttachmentRepositoryImpl(get()) }
         single<MessageDataSource> { MessageDataSourceImpl(get()) }
+        single<UserRepository> { UserRepositoryImpl(get()) }
         single<RoomsDataSource> { RoomsDataSourceImpl(get()) }
         single { RoomController(get(), get()) }
     }

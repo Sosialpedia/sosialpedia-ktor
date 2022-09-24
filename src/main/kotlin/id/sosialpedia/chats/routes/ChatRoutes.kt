@@ -27,8 +27,8 @@ fun Route.configureChats() {
     val userRepository by inject<UserRepository>()
     webSocket("/chat") {
 
-        val userId = call.parameters["userId"] ?: throw IllegalArgumentException("userId can't be empty")
-        println("Adding user! with userId: $userId and socket: $this")
+        val userId = call.request.queryParameters["userId"] ?: throw IllegalArgumentException("userId can't be empty")
+        println("Adding user! with userId: $userId")
 
         userRepository.getUserById(userId) ?: throw IllegalArgumentException("userId isn't found")
 
