@@ -16,7 +16,7 @@ fun mainModule(): org.koin.core.module.Module {
             val username = System.getenv("DB_USERNAME").toString()
             val password = System.getenv("DB_PASSWORD").toString()
             Database.connect(
-                url = "jdbc:postgresql://localhost:1234/sosialpedia_db",
+                url = "jdbc:postgresql://sosialpedia_db/sosialpedia_db",
                 driver = "org.postgresql.Driver",
                 user = username,
                 password = password

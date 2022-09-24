@@ -7,6 +7,7 @@ services:
     environment:
       - POSTGRES_USER=reno
       - POSTGRES_PASSWORD=shalom7007
+      - POSTGRES_DB=sosialpedia_db
     restart: always
   sosialpedia_ktor:
     build:
