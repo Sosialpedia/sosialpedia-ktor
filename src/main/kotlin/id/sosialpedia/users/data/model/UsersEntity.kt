@@ -8,14 +8,14 @@ import org.jetbrains.exposed.sql.Table
  * @Date 12/04/22
  */
 object UsersEntity : Table("users") {
-    val id: Column<String> = varchar("id", 16).uniqueIndex()
+    val id: Column<String> = varchar("id", 50).uniqueIndex()
     val username = varchar("username", 50).uniqueIndex()
     val email = varchar("email", 100).nullable().uniqueIndex()
-    val password = varchar("password", 65)
-    val salt = varchar("salt", 64)
-    val phoneNumber = varchar("phone_number", 50)
+    val password = varchar("hashed_password", 100)
+    val salt = varchar("salt", 100)
+    val phoneNumber = varchar("phone_number", 50).nullable()
     val bio = text("bio").nullable()
-    val dateBirth = long("date_birth")
+    val dateBirth = long("date_birth").nullable()
     val gender = enumerationByName<Gender>("gender", 20)
     val createdAt = long("created_at")
     val updatedAt = long("updated_at").nullable()

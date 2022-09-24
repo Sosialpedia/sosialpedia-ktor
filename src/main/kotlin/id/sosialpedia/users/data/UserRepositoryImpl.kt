@@ -63,7 +63,7 @@ class UserRepositoryImpl(private val db: Database) : UserRepository {
                         createdAt = it[UsersEntity.createdAt],
                         updatedAt = it[UsersEntity.updatedAt],
                         lastLogin = it[UsersEntity.lastLogin],
-                        ipAddress = it[UsersEntity.ipAddress] ?: "can't retrieve Ip Address",
+                        ipAddress = it[UsersEntity.ipAddress] ?: "can't retrieve the Ip Address",
                         device = it[UsersEntity.device]
                     )
                 }

@@ -11,14 +11,14 @@ data class User(
     val email: String?,
     val password: String,
     val salt: String,
-    val phoneNumber: String,
+    val phoneNumber: String?,
     val profilePic: String? = null,
     val bio: String?,
-    val dateBirth: Long,
+    val dateBirth: Long?,
     val gender: String,
     val createdAt: Long,
     val updatedAt: Long? = null,
     val lastLogin: Long?,
-    val ipAddress: String,
+    val ipAddress: String?,
     val device: String? = null
 )
