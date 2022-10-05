@@ -5,6 +5,7 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 sosialpedia-0.0.1.jar
+nginx
 
 ### STS ###
 .apt_generated
