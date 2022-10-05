@@ -6,14 +6,13 @@ package id.sosialpedia.users.routes.model
  */
 @kotlinx.serialization.Serializable
 data class CreateUserRequest(
-    val id: String = "",
     val username: String,
     val email: String? = null,
     val password: String,
     val salt: String = "",
-    val phoneNumber: String = "",
+    val phoneNumber: String? = null,
     val profilePic: String? = null,
-    val bio: String = "",
+    val bio: String? = null,
     val dateBirth: Long = 0L,
     val gender: String = "NotSpecified",
     val lastLogin: Long? = null,

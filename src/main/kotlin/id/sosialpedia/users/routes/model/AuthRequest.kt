@@ -1,4 +1,4 @@
-package id.sosialpedia.users.data
+package id.sosialpedia.users.routes.model
 
 /**
  * @author Samuel Mareno

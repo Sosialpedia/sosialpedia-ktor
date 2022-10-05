@@ -5,7 +5,7 @@ import id.sosialpedia.security.hashing.SaltedHash
 import id.sosialpedia.security.token.TokenClaim
 import id.sosialpedia.security.token.TokenConfig
 import id.sosialpedia.security.token.TokenService
-import id.sosialpedia.users.data.AuthRequest
+import id.sosialpedia.users.routes.model.AuthRequest
 import id.sosialpedia.users.data.AuthResponse
 import id.sosialpedia.users.domain.UserRepository
 import id.sosialpedia.util.WebResponse

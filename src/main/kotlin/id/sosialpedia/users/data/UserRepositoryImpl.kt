@@ -33,7 +33,7 @@ class UserRepositoryImpl(private val db: Database) : UserRepository {
                         createdAt = it[UsersEntity.createdAt],
                         updatedAt = it[UsersEntity.updatedAt],
                         lastLogin = it[UsersEntity.lastLogin],
-                        ipAddress = it[UsersEntity.ipAddress] ?: "can't retrieve Ip Address",
+                        ipAddress = it[UsersEntity.ipAddress],
                         device = it[UsersEntity.device]
                     )
                 }
@@ -110,8 +110,7 @@ class UserRepositoryImpl(private val db: Database) : UserRepository {
     override suspend fun registerUser(createUserRequest: CreateUserRequest): Result<User> {
         return try {
             newSuspendedTransaction {
-                val insert = UsersEntity.insert {
-                    it[id] = createUserRequest.id
+                val insert = UsersEntity.insert { it ->
                     it[username] = createUserRequest.username
                     it[email] = createUserRequest.email
                     it[password] = createUserRequest.password
@@ -129,7 +128,7 @@ class UserRepositoryImpl(private val db: Database) : UserRepository {
                 }
                 val result = insert.resultedValues!!.map {
                     User(
-                        id = it[UsersEntity.id],
+                        id = "secretId",
                         username = it[UsersEntity.username],
                         email = it[UsersEntity.email],
                         password = it[UsersEntity.password],

@@ -70,8 +70,8 @@ fun Route.userConfig() {
         }
     }
 
-    put("user/upd4t3l0g1n/{userId}") {
-        val userId = call.parameters["userId"] ?: throw IllegalArgumentException("userId can't be empty")
+    put("user/upd4t3l0g1n") {
+        val userId = call.request.queryParameters["userId"] ?: throw IllegalArgumentException("userId can't be empty")
         val result = userRepository.updateUserLogin(
             id = userId,
             ipAddress = "1.0.1.0.1",
