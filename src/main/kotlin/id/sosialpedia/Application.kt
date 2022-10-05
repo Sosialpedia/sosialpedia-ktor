@@ -1,6 +1,7 @@
 package id.sosialpedia
 
 import id.sosialpedia.comments.di.commentsModule
+import id.sosialpedia.core.di.coreModule
 import id.sosialpedia.di.mainModule
 import id.sosialpedia.plugins.*
 import id.sosialpedia.posts.di.postsModule
@@ -22,10 +23,11 @@ fun Application.module() {
     install(Koin) {
         modules(
             reactionModule,
-            mainModule(),
+            mainModule,
             usersModule,
             postsModule,
-            commentsModule
+            commentsModule,
+            coreModule
         )
     }
 

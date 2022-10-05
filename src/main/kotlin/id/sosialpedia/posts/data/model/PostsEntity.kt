@@ -3,7 +3,7 @@ package id.sosialpedia.posts.data.model
 import id.sosialpedia.users.data.model.UsersEntity
 import org.jetbrains.exposed.sql.Table
 
-object PostsEntity : Table("posts") {
+object PostsEntity : Table("post") {
     val id = varchar("id", 50).uniqueIndex()
     val userId = varchar("user_id", 50).references(UsersEntity.id)
     val content = text("content")

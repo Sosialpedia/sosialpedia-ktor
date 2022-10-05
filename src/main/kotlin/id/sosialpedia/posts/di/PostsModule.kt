@@ -9,5 +9,5 @@ import org.koin.dsl.module
  * @Date 26/05/22
  */
 val postsModule = module {
-    single<PostRepository> { PostRepositoryImpl(get()) }
+    single<PostRepository> { PostRepositoryImpl(get(), get()) }
 }

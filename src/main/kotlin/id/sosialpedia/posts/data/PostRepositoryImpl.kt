@@ -2,6 +2,7 @@ package id.sosialpedia.posts.data
 
 import id.sosialpedia.comments.data.model.ChildCommentsEntity
 import id.sosialpedia.comments.data.model.CommentsEntity
+import id.sosialpedia.core.domain.OwnerRepository
 import id.sosialpedia.posts.data.model.PostsEntity
 import id.sosialpedia.posts.domain.PostRepository
 import id.sosialpedia.posts.domain.model.Post
@@ -15,7 +16,10 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.util.*
 
-class PostRepositoryImpl(private val db: Database) : PostRepository {
+class PostRepositoryImpl(
+    private val db: Database,
+    private val ownerRepository: OwnerRepository
+) : PostRepository {
 
     override suspend fun getAllPostByUserId(userId: String): List<Post> {
         return newSuspendedTransaction {
@@ -27,39 +31,44 @@ class PostRepositoryImpl(private val db: Database) : PostRepository {
                 }
 
             result.map {
-                val totalLike = (PostsEntity innerJoin LikesEntity)
-                    .slice(LikesEntity.id.count())
-                    .select(LikesEntity.postId eq it[PostsEntity.id])
-                    .groupBy(LikesEntity.id)
-                    .count()
-                    .toInt()
-                val totalDislike = (PostsEntity innerJoin DislikesEntity)
-                    .slice(DislikesEntity.id.count())
-                    .select(DislikesEntity.postId eq it[PostsEntity.id])
-                    .groupBy(DislikesEntity.id)
-                    .count()
-                    .toInt()
-                val totalComment = (PostsEntity innerJoin CommentsEntity)
-                    .slice(CommentsEntity.id.count())
-                    .select(CommentsEntity.postId eq it[PostsEntity.id])
-                    .groupBy(CommentsEntity.id)
-                    .count()
-                    .toInt()
-                val totalChildComment = (CommentsEntity innerJoin ChildCommentsEntity)
-                    .slice(ChildCommentsEntity.id)
-                    .select((ChildCommentsEntity.commentId eq CommentsEntity.id) and (ChildCommentsEntity.postId eq it[PostsEntity.id]))
-                    .groupBy(ChildCommentsEntity.id)
-                    .count()
-                    .toInt()
+
+//                val totalLike = (PostsEntity innerJoin LikesEntity)
+//                    .slice(LikesEntity.id.count())
+//                    .select(LikesEntity.postId eq it[PostsEntity.id])
+//                    .groupBy(LikesEntity.id)
+//                    .count()
+//                    .toInt()
+//                val totalDislike = (PostsEntity innerJoin DislikesEntity)
+//                    .slice(DislikesEntity.id.count())
+//                    .select(DislikesEntity.postId eq it[PostsEntity.id])
+//                    .groupBy(DislikesEntity.id)
+//                    .count()
+//                    .toInt()
+//                val totalComment = (PostsEntity innerJoin CommentsEntity)
+//                    .slice(CommentsEntity.id.count())
+//                    .select(CommentsEntity.postId eq it[PostsEntity.id])
+//                    .groupBy(CommentsEntity.id)
+//                    .count()
+//                    .toInt()
+//                val totalChildComment = (CommentsEntity innerJoin ChildCommentsEntity)
+//                    .slice(ChildCommentsEntity.id)
+//                    .select((ChildCommentsEntity.commentId eq CommentsEntity.id) and (ChildCommentsEntity.postId eq it[PostsEntity.id]))
+//                    .groupBy(ChildCommentsEntity.id)
+//                    .count()
+//                    .toInt()
+
+                val owner = ownerRepository.getOwner(userId)
+
                 Post(
                     id = it[PostsEntity.id],
                     userId = it[PostsEntity.userId],
                     content = it[PostsEntity.content],
                     haveAttachment = it[PostsEntity.haveAttach],
                     createdAt = it[PostsEntity.createdAt],
-                    totalLike = totalLike,
-                    totalDislike = totalDislike,
-                    totalComment = totalComment + totalChildComment
+                    owner = owner,
+                    totalLike = 0,
+                    totalDislike = 0,
+                    totalComment = 0
                 )
             }
         }
@@ -76,12 +85,17 @@ class PostRepositoryImpl(private val db: Database) : PostRepository {
                     it[createdAt] = System.currentTimeMillis()
                 }
                 val post = insert.resultedValues!!.map {
+                    val owner = ownerRepository.getOwner(it[PostsEntity.id])
                     Post(
                         id = it[PostsEntity.id],
                         userId = it[PostsEntity.userId],
                         content = it[PostsEntity.content],
                         haveAttachment = it[PostsEntity.haveAttach],
-                        createdAt = it[PostsEntity.createdAt]
+                        createdAt = it[PostsEntity.createdAt],
+                        owner = owner,
+                        totalComment = 0,
+                        totalLike = 0,
+                        totalDislike = 0
                     )
                 }.first()
                 Result.success(post)
