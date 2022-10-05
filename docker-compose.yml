@@ -8,6 +8,8 @@ services:
       - POSTGRES_USER=reno
       - POSTGRES_PASSWORD=shalom7007
       - POSTGRES_DB=sosialpedia_db
+    volumes:
+      - /opt/sosialpedia/postgresql/data:/var/lib/postgresql/data
     restart: always
   sosialpedia_ktor:
     build:
@@ -16,7 +18,7 @@ services:
     ports:
       - "8081:80"
     volumes:
-      - /app:/opt/sosialpedia/app
+      - /opt/sosialpedia/app:/app
     environment:
       - DB_USERNAME=reno
       - DB_PASSWORD=shalom7007
