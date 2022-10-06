@@ -11,7 +11,7 @@ data class Post(
     val haveAttachment: Boolean,
     val createdAt: Long,
     val owner: Owner,
-    val totalLike: Int,
-    val totalDislike: Int,
-    val totalComment: Int,
+    val totalLike: Long,
+    val totalDislike: Long,
+    val totalComment: Long,
 )

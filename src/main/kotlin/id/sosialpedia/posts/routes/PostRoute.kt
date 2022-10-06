@@ -19,27 +19,35 @@ fun Route.postConfig() {
 
     get("/posts") {
         val httpStatusCode = HttpStatusCode.OK
-        val userId = call.request.queryParameters["userId"] ?: throw IllegalArgumentException("userId is empty!")
+        val userId = call.request.queryParameters["userId"] ?: throw NoSuchElementException("userId is empty!")
         val result = postUserRepository.getAllPostByUserId(userId)
-        call.respond(httpStatusCode, WebResponse(httpStatusCode.description, result, httpStatusCode.value))
+        call.respond(
+            status = httpStatusCode,
+            message = WebResponse(
+                message = httpStatusCode.description,
+                data = result,
+                code = httpStatusCode.value
+            )
+        )
     }
     post("/post") {
         var httpStatusCode = HttpStatusCode.Created
-        val postRequest = call.receive<CreatePostRequest>()
+        val postRequest =
+            call.receiveOrNull<CreatePostRequest>() ?: throw NoSuchElementException("post request is empty")
         val result = postUserRepository.createPost(postRequest)
         if (result.isSuccess) {
             call.respond(
                 httpStatusCode, WebResponse(
-                    httpStatusCode.description,
-                    result.getOrNull(),
-                    httpStatusCode.value
+                    message = httpStatusCode.description,
+                    data = result.getOrNull(),
+                    code = httpStatusCode.value
                 )
             )
         } else {
-            httpStatusCode = HttpStatusCode.NotAcceptable
+            httpStatusCode = HttpStatusCode.MethodNotAllowed
             call.respond(
                 httpStatusCode, WebResponse<List<Int>>(
-                    message = result.exceptionOrNull()?.cause?.localizedMessage ?: "Unknown error occurred",
+                    message = httpStatusCode.description,
                     data = emptyList(),
                     code = httpStatusCode.value
                 )
