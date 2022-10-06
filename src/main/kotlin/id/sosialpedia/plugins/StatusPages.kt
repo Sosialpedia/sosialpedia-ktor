@@ -10,12 +10,23 @@ import java.sql.SQLException
 fun Application.configureStatusPages() {
     install(StatusPages) {
         exception<SQLException> { call, cause ->
+            cause.printStackTrace()
             val httpStatusCode = HttpStatusCode.MethodNotAllowed
             call.respond(
                 httpStatusCode, WebResponse<List<String>>(
                     code = httpStatusCode.value,
                     data = emptyList(),
-                    message = cause.cause?.localizedMessage ?: "Unknown error occurred"
+                    message = "Unknown error occurred"
+                )
+            )
+        }
+        exception<NoSuchElementException> { call, cause ->
+            val httpStatusCode = HttpStatusCode.BadRequest
+            call.respond(
+                httpStatusCode, WebResponse<List<String>>(
+                    code = httpStatusCode.value,
+                    data = emptyList(),
+                    message = cause.message ?: "Unknown error occurred"
                 )
             )
         }

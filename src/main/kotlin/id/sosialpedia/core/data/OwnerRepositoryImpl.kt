@@ -7,8 +7,6 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import java.lang.Exception
-import java.lang.IllegalArgumentException
 
 /**
  * @author Samuel Mareno

@@ -1,20 +1,15 @@
 package id.sosialpedia.posts.data
 
-import id.sosialpedia.comments.data.model.ChildCommentsEntity
 import id.sosialpedia.comments.data.model.CommentsEntity
 import id.sosialpedia.core.domain.OwnerRepository
 import id.sosialpedia.posts.data.model.PostsEntity
 import id.sosialpedia.posts.domain.PostRepository
 import id.sosialpedia.posts.domain.model.Post
 import id.sosialpedia.posts.routes.model.CreatePostRequest
-import id.sosialpedia.reaction.data.model.DislikesEntity
-import id.sosialpedia.reaction.data.model.LikesEntity
 import id.sosialpedia.users.data.model.UsersEntity
-import id.sosialpedia.util.toShuffledMD5
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import java.util.*
 
 class PostRepositoryImpl(
     private val db: Database,
@@ -44,12 +39,11 @@ class PostRepositoryImpl(
 //                    .groupBy(DislikesEntity.id)
 //                    .count()
 //                    .toInt()
-//                val totalComment = (PostsEntity innerJoin CommentsEntity)
-//                    .slice(CommentsEntity.id.count())
-//                    .select(CommentsEntity.postId eq it[PostsEntity.id])
-//                    .groupBy(CommentsEntity.id)
-//                    .count()
-//                    .toInt()
+                val totalComment = (PostsEntity innerJoin CommentsEntity)
+                    .slice(CommentsEntity.id.count())
+                    .select(CommentsEntity.postId eq it[PostsEntity.id])
+                    .groupBy(CommentsEntity.id)
+                    .count()
 //                val totalChildComment = (CommentsEntity innerJoin ChildCommentsEntity)
 //                    .slice(ChildCommentsEntity.id)
 //                    .select((ChildCommentsEntity.commentId eq CommentsEntity.id) and (ChildCommentsEntity.postId eq it[PostsEntity.id]))
@@ -68,7 +62,7 @@ class PostRepositoryImpl(
                     owner = owner,
                     totalLike = 0,
                     totalDislike = 0,
-                    totalComment = 0
+                    totalComment = totalComment
                 )
             }
         }
@@ -78,16 +72,15 @@ class PostRepositoryImpl(
         return newSuspendedTransaction(db = db) {
             try {
                 val insert = PostsEntity.insert {
-                    it[id] = UUID.randomUUID().toShuffledMD5(20)
                     it[userId] = postRequest.userId
                     it[content] = postRequest.content
                     it[haveAttach] = postRequest.haveAttachment
                     it[createdAt] = System.currentTimeMillis()
                 }
                 val post = insert.resultedValues!!.map {
-                    val owner = ownerRepository.getOwner(it[PostsEntity.id])
+                    val owner = ownerRepository.getOwner(postRequest.userId)
                     Post(
-                        id = it[PostsEntity.id],
+                        id = "secretId",
                         userId = it[PostsEntity.userId],
                         content = it[PostsEntity.content],
                         haveAttachment = it[PostsEntity.haveAttach],
@@ -100,6 +93,7 @@ class PostRepositoryImpl(
                 }.first()
                 Result.success(post)
             } catch (e: Exception) {
+                e.printStackTrace()
                 Result.failure(e)
             }
 
