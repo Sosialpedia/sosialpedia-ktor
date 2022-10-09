@@ -8,7 +8,7 @@ data class Comment(
     val postId: String,
     val haveAttachment: Boolean,
     val createdAt: Long,
-    val totalLike: Int = 0,
-    val totalDislike: Int = 0,
-    val totalChildComment: Int = 0
+    val totalLike: Long = 0,
+    val totalDislike: Long = 0,
+    val totalChildComment: Long = 0
 )

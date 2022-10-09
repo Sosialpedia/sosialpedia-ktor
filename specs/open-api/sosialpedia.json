@@ -1,0 +1,113 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Sosialpedia",
+    "description": "Media social but built for privacy",
+    "termsOfService": "https://sosialpedia.xyz/termsofservice",
+    "contact": {
+      "name": "Samuel Mareno",
+      "email": "samuelmareno777@gmail.com",
+      "url": "https://sosialpedia.xyz"
+    },
+    "license": {
+      "name": "Apache-2.0",
+      "url": "https://apache.org/licenses/LICENSE-2.0"
+    },
+    "version": "1"
+  },
+  "servers": [
+    {
+      "url": "https://{environment}.sosialpedia.xyz/v1",
+      "description": "Sosialpedia RESTful API",
+      "variables": {
+        "environment": {
+          "default": "dev",
+          "enum": [
+            "dev",
+            "qa",
+            "prod"
+          ]
+        }
+      }
+    }
+  ],
+  "externalDocs": {
+    "description": "API documentation for Sosialpedia",
+    "url": "https://sosialpedia.xyz/docs"
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "Show the version of Ktor",
+        "description": "Test the server",
+        "responses": {
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "summary": "Get all users",
+        "description": "Get all active users by default",
+        "responses": {
+        }
+      }
+    },
+    "/user/{userId}": {
+      "get": {
+        "summary": "Get user with specific id",
+        "description": "Get user with specific id in database",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "user id for get the user"
+          }
+        ],
+        "responses": {
+        }
+      },
+      "delete": {
+        "summary": "Delete existing user",
+        "description": "Delete existing user in database",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "user id for delete the user"
+          }
+        ],
+        "responses": {
+        }
+      }
+    },
+    "/user/upd4t3l0g1n": {
+      "put": {
+        "summary": "Update user last_login",
+        "description": "Update user last_login in database",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "last_login successfully updated"
+          }
+        }
+      }
+    }
+  }
+}

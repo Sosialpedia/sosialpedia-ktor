@@ -37,16 +37,18 @@ fun Route.postConfig() {
         val result = postUserRepository.createPost(postRequest)
         if (result.isSuccess) {
             call.respond(
-                httpStatusCode, WebResponse(
+                status = httpStatusCode,
+                message = WebResponse(
                     message = httpStatusCode.description,
                     data = result.getOrNull(),
                     code = httpStatusCode.value
                 )
             )
         } else {
-            httpStatusCode = HttpStatusCode.MethodNotAllowed
+            httpStatusCode = HttpStatusCode.BadRequest
             call.respond(
-                httpStatusCode, WebResponse<List<Int>>(
+                status = httpStatusCode,
+                message = WebResponse<List<Int>>(
                     message = httpStatusCode.description,
                     data = emptyList(),
                     code = httpStatusCode.value

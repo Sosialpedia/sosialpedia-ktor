@@ -13,4 +13,10 @@ interface ReactionRepository {
     suspend fun addLikeToComment(commentId: String, userId: String): Result<String>
 
     suspend fun removeLikeFromComment(commentId: String, userId: String): Result<String>
+
+    suspend fun countTotalCommentFromPost(postId: String): Long
+    suspend fun countTotalLikeFromPost(postId: String): Long
+    suspend fun countTotalDislikeFromPost(postId: String): Long
+    suspend fun countTotalLikeFromComment(commentId: String): Long
+    suspend fun countTotalDislikeFromComment(commentId: String): Long
 }

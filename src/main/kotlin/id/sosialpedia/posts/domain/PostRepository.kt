@@ -9,5 +9,5 @@ interface PostRepository {
 
     suspend fun createPost(postRequest: CreatePostRequest): Result<Post>
 
-    suspend fun deletePostById(postId: String, userId: String): Result<Boolean>
+    suspend fun deletePostById(postId: String, userId: String)
 }

@@ -11,7 +11,7 @@ fun Application.configureStatusPages() {
     install(StatusPages) {
         exception<SQLException> { call, cause ->
             cause.printStackTrace()
-            val httpStatusCode = HttpStatusCode.MethodNotAllowed
+            val httpStatusCode = HttpStatusCode.InternalServerError
             call.respond(
                 httpStatusCode, WebResponse<List<String>>(
                     code = httpStatusCode.value,
@@ -21,7 +21,19 @@ fun Application.configureStatusPages() {
             )
         }
         exception<NoSuchElementException> { call, cause ->
+            cause.printStackTrace()
             val httpStatusCode = HttpStatusCode.BadRequest
+            call.respond(
+                httpStatusCode, WebResponse<List<String>>(
+                    code = httpStatusCode.value,
+                    data = emptyList(),
+                    message = cause.message ?: "Unknown error occurred"
+                )
+            )
+        }
+        exception<IllegalArgumentException> { call, cause ->
+            cause.printStackTrace()
+            val httpStatusCode = HttpStatusCode.InternalServerError
             call.respond(
                 httpStatusCode, WebResponse<List<String>>(
                     code = httpStatusCode.value,

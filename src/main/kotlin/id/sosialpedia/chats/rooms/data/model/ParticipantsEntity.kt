@@ -1,6 +1,6 @@
 package id.sosialpedia.chats.rooms.data.model
 
-import id.sosialpedia.users.data.model.UsersEntity
+import id.sosialpedia.users.data.model.UserEntity
 import org.jetbrains.exposed.sql.Table
 
 /**
@@ -9,5 +9,5 @@ import org.jetbrains.exposed.sql.Table
  */
 object ParticipantsEntity : Table("participants") {
     val roomId = varchar("room_id", 25).references(RoomsEntity.id)
-    val userId = varchar("user_id", 16).references(UsersEntity.id)
+    val userId = varchar("user_id", 16).references(UserEntity.id)
 }

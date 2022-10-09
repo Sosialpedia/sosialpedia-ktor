@@ -2,7 +2,7 @@ package id.sosialpedia.core.data
 
 import id.sosialpedia.core.domain.Owner
 import id.sosialpedia.core.domain.OwnerRepository
-import id.sosialpedia.users.data.model.UsersEntity
+import id.sosialpedia.users.data.model.UserEntity
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.select
@@ -17,13 +17,13 @@ class OwnerRepositoryImpl(private val database: Database) : OwnerRepository {
     override suspend fun getOwner(userId: String): Owner {
         return newSuspendedTransaction(db = database) {
             try {
-                UsersEntity
-                    .slice(UsersEntity.username, UsersEntity.profilePic)
-                    .select(UsersEntity.id eq userId)
+                UserEntity
+                    .slice(UserEntity.username, UserEntity.profilePic)
+                    .select(UserEntity.id eq userId)
                     .map {
                         Owner(
-                            username = it[UsersEntity.username],
-                            profilePic = it[UsersEntity.profilePic]
+                            username = it[UserEntity.username],
+                            profilePic = it[UserEntity.profilePic]
                         )
                     }.first()
             } catch (e: Exception) {

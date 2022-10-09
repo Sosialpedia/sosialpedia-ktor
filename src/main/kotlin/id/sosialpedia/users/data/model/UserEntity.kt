@@ -7,7 +7,7 @@ import org.jetbrains.exposed.sql.Table
  * @author Samuel Mareno
  * @Date 12/04/22
  */
-object UsersEntity : Table("users") {
+object UserEntity : Table("user") {
     val id: Column<String> = varchar("id", 50).uniqueIndex()
     val username = varchar("username", 50).uniqueIndex()
     val email = varchar("email", 100).nullable().uniqueIndex()
