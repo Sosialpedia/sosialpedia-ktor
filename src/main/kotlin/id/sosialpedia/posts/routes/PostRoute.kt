@@ -21,11 +21,12 @@ fun Route.postConfig() {
     authenticate {
         get("/posts") {
             var httpStatusCode = HttpStatusCode.OK
-            val userId = call.request.queryParameters["userId"] ?: kotlin.run {
-                httpStatusCode = HttpStatusCode.BadRequest
+            val principal = call.principal<JWTPrincipal>()
+            val userId = principal?.getClaim("userId", String::class) ?: kotlin.run {
+                httpStatusCode = HttpStatusCode.Unauthorized
                 call.respond(
                     status = httpStatusCode,
-                    message = WebResponse<List<Any>>(
+                    message = WebResponse<List<String>>(
                         message = httpStatusCode.description,
                         data = emptyList(),
                         code = httpStatusCode.value
@@ -38,7 +39,7 @@ fun Route.postConfig() {
                 status = httpStatusCode,
                 message = WebResponse(
                     message = httpStatusCode.description,
-                    data = result,
+                    data = result.getOrDefault(emptyList()),
                     code = httpStatusCode.value
                 )
             )
