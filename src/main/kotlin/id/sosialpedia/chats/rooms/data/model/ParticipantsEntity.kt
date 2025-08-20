@@ -9,5 +9,5 @@ import org.jetbrains.exposed.sql.Table
  */
 object ParticipantsEntity : Table("participants") {
     val roomId = varchar("room_id", 25).references(RoomsEntity.id)
-    val userId = varchar("user_id", 16).references(UserEntity.id)
+    val userId = uuid("user_id").references(UserEntity.id)
 }

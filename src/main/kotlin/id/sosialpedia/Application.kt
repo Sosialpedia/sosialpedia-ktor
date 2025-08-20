@@ -5,11 +5,11 @@ import id.sosialpedia.core.di.coreModule
 import id.sosialpedia.di.mainModule
 import id.sosialpedia.plugins.*
 import id.sosialpedia.posts.di.postsModule
-import id.sosialpedia.reaction.di.reactionModule
 import id.sosialpedia.security.hashing.SHA256HashingService
 import id.sosialpedia.security.token.JwtTokenService
 import id.sosialpedia.security.token.TokenConfig
 import id.sosialpedia.users.di.usersModule
+import id.sosialpedia.votes.di.voteModule
 import io.ktor.server.application.*
 import org.koin.ktor.plugin.Koin
 
@@ -17,12 +17,11 @@ fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)
 }
 
-@Suppress("unused") // application.conf references the main function. This annotation prevents the IDE from marking it as unused.
 fun Application.module() {
 
     install(Koin) {
         modules(
-            reactionModule,
+            voteModule,
             mainModule,
             usersModule,
             postsModule,
@@ -30,6 +29,7 @@ fun Application.module() {
             coreModule
         )
     }
+
 
     val tokenService = JwtTokenService()
     val tokenConfig = TokenConfig(
@@ -40,10 +40,10 @@ fun Application.module() {
     )
     val hashingService = SHA256HashingService()
 
+    configureSecurity(config = tokenConfig)
     configureSockets()
     configureRouting(hashingService, tokenService, tokenConfig)
     configureStatusPages()
-    configureSecurity(config = tokenConfig)
     configureHTTP()
     configureMonitoring()
     configureSerialization()

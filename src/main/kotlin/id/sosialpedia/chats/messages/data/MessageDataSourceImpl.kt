@@ -6,8 +6,8 @@ import id.sosialpedia.chats.messages.domain.model.Message
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import java.util.*
 
 /**
  * @author Samuel Mareno
@@ -26,7 +26,7 @@ class MessageDataSourceImpl(
                     Message(
                         id = it[MessagesEntity.id],
                         roomId = it[MessagesEntity.roomId],
-                        userId = it[MessagesEntity.userId],
+                        userId = it[MessagesEntity.userId].toString(),
                         text = it[MessagesEntity.text],
                         isRead = false,
                         isReceived = false,
@@ -34,6 +34,7 @@ class MessageDataSourceImpl(
                     )
                 }
             } catch (e: Exception) {
+                e.printStackTrace()
                 emptyList()
             }
         }
@@ -44,7 +45,7 @@ class MessageDataSourceImpl(
             try {
                 MessagesEntity.insert {
                     it[id] = message.id
-                    it[userId] = message.userId
+                    it[userId] = UUID.fromString(message.userId)
                     it[roomId] = message.roomId
                     it[text] = message.text
                     it[createdAt] = message.createdAt

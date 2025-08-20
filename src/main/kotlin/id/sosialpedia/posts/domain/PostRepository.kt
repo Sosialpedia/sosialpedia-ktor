@@ -5,9 +5,9 @@ import id.sosialpedia.posts.routes.model.CreatePostRequest
 
 interface PostRepository {
 
-    suspend fun getAllPostByUserId(userId: String): List<Post>
+    suspend fun getAllPostByUserId(userId: String): Result<List<Post>>
 
-    suspend fun createPost(postRequest: CreatePostRequest): Result<Post>
+    suspend fun createPost(userId: String, postRequest: CreatePostRequest): Result<Post>
 
-    suspend fun deletePostById(postId: String, userId: String)
+    suspend fun deletePostById(postId: String, userId: String): Result<Boolean>
 }

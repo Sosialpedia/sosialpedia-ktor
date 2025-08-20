@@ -2,15 +2,21 @@ package id.sosialpedia.comments.data.model
 
 import id.sosialpedia.posts.data.model.PostEntity
 import id.sosialpedia.users.data.model.UserEntity
-import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.dao.id.UUIDTable
+import org.jetbrains.exposed.sql.ReferenceOption
 
-object CommentEntity : Table("comment") {
-    val id = varchar("id", 50).uniqueIndex()
-    val userId = varchar("user_id", 50).references(UserEntity.id)
-    val postId = varchar("post_id", 50).references(PostEntity.id)
+object CommentEntity : UUIDTable("comments") {
+    // Foreign key ke tabel posts
+    val postId = uuid("post_id").references(PostEntity.id, onDelete = ReferenceOption.CASCADE)
+
+    // Foreign key ke tabel users
+    val userId = uuid("user_id").references(UserEntity.id, onDelete = ReferenceOption.CASCADE)
+
+    // KUNCI untuk nested comments: Foreign key yang merujuk ke tabel ini sendiri.
+    // Dibuat nullable karena komentar level 1 (parent) tidak punya parent_id.
+    val parentCommentId = uuid("parent_comment_id").references(id, onDelete = ReferenceOption.CASCADE).nullable()
+
     val content = text("content")
-    val haveAttach = bool("have_attachment")
+    val haveAttachment = bool("have_attachment").default(false)
     val createdAt = long("created_at")
-
-    override val primaryKey: PrimaryKey = PrimaryKey(id)
 }

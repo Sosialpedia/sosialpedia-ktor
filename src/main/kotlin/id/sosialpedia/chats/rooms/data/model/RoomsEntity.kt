@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.Table
  */
 object RoomsEntity : Table("rooms") {
     val id = varchar("id", 25)
-    val author = varchar("author", 16).references(UserEntity.id)
+    val author = uuid("author").references(UserEntity.id)
     val createdAt = long("created_at")
 
     override val primaryKey: PrimaryKey = PrimaryKey(id)

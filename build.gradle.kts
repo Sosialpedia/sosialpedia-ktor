@@ -7,8 +7,8 @@ val commons_codec_version: String by project
 
 plugins {
     application
-    kotlin("jvm") version "1.7.10"
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.7.10"
+    kotlin("jvm") version "2.1.20"
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.1.20"
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
@@ -53,8 +53,6 @@ dependencies {
     implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-auth:$ktorVersion")
     implementation("io.ktor:ktor-server-auth-jwt:$ktorVersion")
-    implementation("io.ktor:ktor-server-auth-jvm:2.1.0")
-    implementation("io.ktor:ktor-server-auth-jwt-jvm:2.1.0")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
 
     implementation("commons-codec:commons-codec:$commons_codec_version")
@@ -66,12 +64,11 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
 
     // SQL Driver
-    implementation("org.postgresql:postgresql:42.4.2")
+    implementation("org.postgresql:postgresql:42.7.7")
 
     // Koin Dependency Injection
     implementation("io.insert-koin:koin-ktor:$koinVersion")
 
-    testImplementation("io.ktor:ktor-server-tests-jvm:$ktorVersion")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
 }

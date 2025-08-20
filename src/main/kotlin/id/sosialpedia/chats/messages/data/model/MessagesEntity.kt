@@ -10,7 +10,7 @@ import org.jetbrains.exposed.sql.Table
  */
 object MessagesEntity : Table("messages") {
     val id = varchar("id", 32)
-    val userId = varchar("user_id", 16).references(UserEntity.id)
+    val userId = uuid("user_id").references(UserEntity.id)
     val roomId = varchar("room_id", 25).references(RoomsEntity.id)
     val text = text("text")
     val createdAt = long("created_at")

@@ -3,40 +3,54 @@ package id.sosialpedia.users.data
 import id.sosialpedia.users.data.model.Gender
 import id.sosialpedia.users.data.model.UserEntity
 import id.sosialpedia.users.domain.UserRepository
+import id.sosialpedia.users.domain.model.RegisteredUser
 import id.sosialpedia.users.domain.model.User
 import id.sosialpedia.users.routes.model.CreateUserRequest
 import id.sosialpedia.users.routes.model.UserInfoRequest
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import java.util.*
 
 /**
  * @author Samuel Mareno
- * @Date 12/04/22
+ * @Date 08/08/2025
  */
 class UserRepositoryImpl(private val db: Database) : UserRepository {
+
+    private fun toUser(row: ResultRow) = User(
+        id = row[UserEntity.id].value.toString(),
+        username = row[UserEntity.username],
+        email = row[UserEntity.email],
+        phoneNumber = row[UserEntity.phoneNumber],
+        password = row[UserEntity.password],
+        salt = row[UserEntity.salt],
+        profilePic = row[UserEntity.profilePicUrl],
+        bio = row[UserEntity.bio],
+        dateBirth = row[UserEntity.dateOfBirth],
+        gender = row[UserEntity.gender].name,
+        createdAt = row[UserEntity.createdAt],
+        updatedAt = row[UserEntity.updatedAt],
+        lastLogin = row[UserEntity.lastLogin],
+        ipAddress = row[UserEntity.ipAddress],
+        device = row[UserEntity.device]
+    )
+
+    private fun toRegisteredUser(row: ResultRow) = RegisteredUser(
+        id = "*****" + row[UserEntity.id].value.toString().substring(row[UserEntity.id].value.toString().length - 4),
+        username = row[UserEntity.username],
+        email = row[UserEntity.email],
+        phoneNumber = row[UserEntity.phoneNumber],
+        profilePic = row[UserEntity.profilePicUrl],
+        bio = row[UserEntity.bio],
+        dateBirth = row[UserEntity.dateOfBirth],
+        gender = row[UserEntity.gender].name
+    )
+
     override suspend fun getAllUsers(): Result<List<User>> {
         return newSuspendedTransaction {
             try {
-                val result = UserEntity.selectAll().map {
-                    User(
-                        id = it[UserEntity.id],
-                        username = it[UserEntity.username],
-                        email = it[UserEntity.email],
-                        phoneNumber = it[UserEntity.phoneNumber],
-                        password = it[UserEntity.password],
-                        salt = it[UserEntity.salt],
-                        profilePic = it[UserEntity.profilePic],
-                        bio = it[UserEntity.bio],
-                        dateBirth = it[UserEntity.dateBirth],
-                        gender = it[UserEntity.gender].name,
-                        createdAt = it[UserEntity.createdAt],
-                        updatedAt = it[UserEntity.updatedAt],
-                        lastLogin = it[UserEntity.lastLogin],
-                        ipAddress = it[UserEntity.ipAddress],
-                        device = it[UserEntity.device]
-                    )
-                }
+                val result = UserEntity.selectAll().map(::toUser)
                 Result.success(result)
             } catch (e: Exception) {
                 println("error getUser $e")
@@ -45,80 +59,57 @@ class UserRepositoryImpl(private val db: Database) : UserRepository {
         }
     }
 
-    override suspend fun getUserById(userId: String): User? {
+    override suspend fun getUserById(userId: String): Result<User> {
         return newSuspendedTransaction(db = db) {
             try {
-                val users = UserEntity.select(UserEntity.id eq userId).map {
-                    User(
-                        id = it[UserEntity.id],
-                        username = it[UserEntity.username],
-                        email = it[UserEntity.email],
-                        phoneNumber = it[UserEntity.phoneNumber],
-                        password = it[UserEntity.password],
-                        salt = it[UserEntity.salt],
-                        profilePic = it[UserEntity.profilePic],
-                        bio = it[UserEntity.bio],
-                        dateBirth = it[UserEntity.dateBirth],
-                        gender = it[UserEntity.gender].name,
-                        createdAt = it[UserEntity.createdAt],
-                        updatedAt = it[UserEntity.updatedAt],
-                        lastLogin = it[UserEntity.lastLogin],
-                        ipAddress = it[UserEntity.ipAddress] ?: "can't retrieve the Ip Address",
-                        device = it[UserEntity.device]
-                    )
-                }
-                users[0]
+                val user = UserEntity.selectAll().where { UserEntity.id eq UUID.fromString(userId) }
+                    .map(::toUser)
+                    .firstOrNull() ?: throw NoSuchElementException("User with ID $userId not found")
+                Result.success(user)
             } catch (e: Exception) {
-                null
+                Result.failure(e)
             }
-
         }
     }
 
-    override suspend fun getUserByUsername(username: String): User? {
+    override suspend fun getUserByUsername(username: String): Result<User> {
         return newSuspendedTransaction {
             try {
-                val resultRow = UserEntity
-                    .select(UserEntity.username eq username).firstOrNull()
-                if (resultRow == null) {
-                    null
-                } else {
-                    User(
-                        id = resultRow[UserEntity.id],
-                        username = resultRow[UserEntity.username],
-                        email = resultRow[UserEntity.email],
-                        phoneNumber = resultRow[UserEntity.phoneNumber],
-                        password = resultRow[UserEntity.password],
-                        salt = resultRow[UserEntity.salt],
-                        profilePic = resultRow[UserEntity.profilePic],
-                        bio = resultRow[UserEntity.bio],
-                        dateBirth = resultRow[UserEntity.dateBirth],
-                        gender = resultRow[UserEntity.gender].name,
-                        createdAt = resultRow[UserEntity.createdAt],
-                        updatedAt = resultRow[UserEntity.updatedAt],
-                        lastLogin = resultRow[UserEntity.lastLogin],
-                        ipAddress = resultRow[UserEntity.ipAddress] ?: "can't retrieve Ip Address",
-                        device = resultRow[UserEntity.device]
-                    )
-                }
+                val user = UserEntity.selectAll().where { UserEntity.username eq username }
+                    .map(::toUser)
+                    .firstOrNull() ?: throw NoSuchElementException("User with username $username not found")
+                Result.success(user)
             } catch (e: Exception) {
-                null
+                Result.failure(e)
             }
         }
     }
 
-    override suspend fun registerUser(createUserRequest: CreateUserRequest): Result<User> {
-        return try {
-            newSuspendedTransaction {
-                val insert = UserEntity.insert { it ->
+    override suspend fun getUserByEmail(email: String): Result<User> {
+        return newSuspendedTransaction {
+            try {
+                val user = UserEntity.selectAll().where { UserEntity.email eq email }
+                    .map(::toUser)
+                    .firstOrNull() ?: throw NoSuchElementException("User with email $email not found")
+                Result.success(user)
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
+    }
+
+    override suspend fun registerUser(createUserRequest: CreateUserRequest): Result<RegisteredUser> {
+        return newSuspendedTransaction {
+            try {
+                val insertStatement = UserEntity.insert {
                     it[username] = createUserRequest.username
                     it[email] = createUserRequest.email
                     it[password] = createUserRequest.password
                     it[salt] = createUserRequest.salt
                     it[phoneNumber] = createUserRequest.phoneNumber
-                    it[profilePic] = createUserRequest.profilePic
+                    it[profilePicUrl] = createUserRequest.profilePic
                     it[bio] = createUserRequest.bio
-                    it[dateBirth] = createUserRequest.dateBirth
+                    it[dateOfBirth] = createUserRequest.dateBirth
                     it[gender] = Gender.valueOf(createUserRequest.gender)
                     it[createdAt] = System.currentTimeMillis()
                     it[updatedAt] = null
@@ -126,29 +117,11 @@ class UserRepositoryImpl(private val db: Database) : UserRepository {
                     it[ipAddress] = createUserRequest.ipAddress
                     it[device] = createUserRequest.device
                 }
-                val result = insert.resultedValues!!.map {
-                    User(
-                        id = "secretId",
-                        username = it[UserEntity.username],
-                        email = it[UserEntity.email],
-                        password = it[UserEntity.password],
-                        salt = it[UserEntity.salt],
-                        phoneNumber = it[UserEntity.phoneNumber],
-                        profilePic = it[UserEntity.profilePic],
-                        bio = it[UserEntity.bio],
-                        dateBirth = it[UserEntity.dateBirth],
-                        gender = it[UserEntity.gender].name,
-                        createdAt = it[UserEntity.createdAt],
-                        updatedAt = null,
-                        lastLogin = it[UserEntity.lastLogin],
-                        ipAddress = it[UserEntity.ipAddress] ?: "can't retrieve IP Address",
-                        device = it[UserEntity.device]
-                    )
-                }.first()
-                Result.success(result)
+                val newUser = insertStatement.resultedValues!!.map(::toRegisteredUser).first()
+                Result.success(newUser)
+            } catch (e: Exception) {
+                Result.failure(e)
             }
-        } catch (e: Exception) {
-            Result.failure(e)
         }
     }
 
@@ -158,7 +131,7 @@ class UserRepositoryImpl(private val db: Database) : UserRepository {
         device: String
     ): Result<Unit> {
         newSuspendedTransaction {
-            UserEntity.update({ UserEntity.id eq id }) {
+            UserEntity.update({ UserEntity.id eq UUID.fromString(id) }) {
                 it[UserEntity.ipAddress] = ipAddress
                 it[UserEntity.device] = device
                 it[lastLogin] = System.currentTimeMillis()
@@ -170,13 +143,13 @@ class UserRepositoryImpl(private val db: Database) : UserRepository {
     override suspend fun updateUserInfo(userId: String, userInfoRequest: UserInfoRequest): Result<String> {
         return newSuspendedTransaction {
             try {
-                UserEntity.update({ UserEntity.id eq userId }) {
+                UserEntity.update({ UserEntity.id eq UUID.fromString(userId) }) {
                     it[username] = userInfoRequest.username
                     it[email] = userInfoRequest.email
                     it[phoneNumber] = userInfoRequest.phoneNumber
-                    it[profilePic] = userInfoRequest.profilePicture
+                    it[profilePicUrl] = userInfoRequest.profilePicture
                     it[bio] = userInfoRequest.bio
-                    it[dateBirth] = userInfoRequest.dateBirth
+                    it[dateOfBirth] = userInfoRequest.dateBirth
                     it[gender] = Gender.valueOf(userInfoRequest.gender)
                 }
                 Result.success("Successfully updated")
@@ -188,7 +161,7 @@ class UserRepositoryImpl(private val db: Database) : UserRepository {
 
     override suspend fun deleteUser(id: String): Result<Unit> {
         newSuspendedTransaction {
-            UserEntity.deleteWhere { UserEntity.id eq id }
+            UserEntity.deleteWhere { UserEntity.id eq UUID.fromString(id) }
         }
         return Result.success(Unit)
     }

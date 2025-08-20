@@ -1,5 +1,6 @@
 package id.sosialpedia.users.domain
 
+import id.sosialpedia.users.domain.model.RegisteredUser
 import id.sosialpedia.users.domain.model.User
 import id.sosialpedia.users.routes.model.CreateUserRequest
 import id.sosialpedia.users.routes.model.UserInfoRequest
@@ -12,11 +13,13 @@ interface UserRepository {
 
     suspend fun getAllUsers(): Result<List<User>>
 
-    suspend fun getUserById(userId: String): User?
+    suspend fun getUserById(userId: String): Result<User>
 
-    suspend fun getUserByUsername(username: String): User?
+    suspend fun getUserByUsername(username: String): Result<User>
 
-    suspend fun registerUser(createUserRequest: CreateUserRequest): Result<User>
+    suspend fun getUserByEmail(email: String): Result<User>
+
+    suspend fun registerUser(createUserRequest: CreateUserRequest): Result<RegisteredUser>
 
     suspend fun updateUserLogin(id: String, ipAddress: String, device: String): Result<Unit>
 

@@ -5,7 +5,6 @@ import id.sosialpedia.comments.routes.model.ChildCommentRequest
 import id.sosialpedia.comments.routes.model.CommentRequest
 import id.sosialpedia.util.WebResponse
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -66,26 +65,6 @@ fun Route.commentConfig() {
         }
     }
 
-    get("comments/reno") {
-        var httpStatusCode = HttpStatusCode.OK
-        val result = commentRepository.testingTransaction()
-        if (result.isSuccess) {
-            call.respond(
-                httpStatusCode,
-                WebResponse(httpStatusCode.description, result.getOrNull(), httpStatusCode.value)
-            )
-        } else {
-            httpStatusCode = HttpStatusCode.NotAcceptable
-            call.respond(
-                httpStatusCode,
-                WebResponse(
-                    httpStatusCode.description,
-                    result.exceptionOrNull()?.localizedMessage,
-                    httpStatusCode.value
-                )
-            )
-        }
-    }
     delete("/comment") {
         var httpStatusCode = HttpStatusCode.OK
         val commentId = call.request.queryParameters["commentId"]

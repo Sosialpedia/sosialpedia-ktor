@@ -17,6 +17,4 @@ interface CommentRepository {
     suspend fun addChildComment(childCommentRequest: ChildCommentRequest): Result<ChildComment>
 
     suspend fun deleteChildComment(childCommentId: String, commentId: String, userId: String): Result<String>
-
-    suspend fun testingTransaction(): Result<List<String>>
 }

@@ -17,6 +17,6 @@ class TestApplication {
     fun testHelloWorld() = testApplication {
         val response = client.get("/")
         assertEquals(HttpStatusCode.OK, response.status)
-        assertEquals("Hello World!", response.bodyAsText())
+        assertEquals("Hello Sosialpedia!", response.bodyAsText())
     }
 }

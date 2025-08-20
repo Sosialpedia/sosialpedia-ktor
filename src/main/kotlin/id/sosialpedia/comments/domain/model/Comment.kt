@@ -1,14 +1,19 @@
 package id.sosialpedia.comments.domain.model
 
-@kotlinx.serialization.Serializable
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Comment(
     val id: String,
-    val userId: String,
-    val content: String,
     val postId: String,
+    val userId: String,
+    val username: String,
+    val userProfilePicUrl: String?,
+    val content: String,
+    val parentCommentId: String?,
     val haveAttachment: Boolean,
     val createdAt: Long,
-    val totalLike: Long = 0,
-    val totalDislike: Long = 0,
-    val totalChildComment: Long = 0
+    val totalLikes: Long = 0,
+    val totalDislikes: Long = 0,
+    val replies: List<Comment> = emptyList()
 )

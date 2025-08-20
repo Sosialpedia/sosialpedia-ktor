@@ -5,12 +5,11 @@ import id.sosialpedia.security.hashing.SaltedHash
 import id.sosialpedia.security.token.TokenClaim
 import id.sosialpedia.security.token.TokenConfig
 import id.sosialpedia.security.token.TokenService
-import id.sosialpedia.users.data.AuthResponse
+import id.sosialpedia.users.data.model.AuthResponse
 import id.sosialpedia.users.domain.UserRepository
 import id.sosialpedia.users.routes.model.AuthRequest
 import id.sosialpedia.util.WebResponse
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -30,7 +29,7 @@ fun Route.userLogin(
 
     post("user/signin") {
         var httpStatusCode = HttpStatusCode.OK
-        val request = call.receiveOrNull<AuthRequest>() ?: kotlin.run {
+        val request = call.receiveNullable<AuthRequest>() ?: kotlin.run {
             call.respond(HttpStatusCode.BadRequest)
             return@post
         }
@@ -44,13 +43,18 @@ fun Route.userLogin(
             return@post
         }
 
-        val user = userRepository.getUserByUsername(request.username) ?: kotlin.run {
+        val userResult = if (request.username.contains("@") && request.username.contains(".")) {
+            userRepository.getUserByEmail(request.username)
+        } else {
+            userRepository.getUserByUsername(request.username)
+        }
+        val user = userResult.getOrNull() ?: kotlin.run {
             httpStatusCode = HttpStatusCode.BadRequest
             call.respond(
                 httpStatusCode,
                 WebResponse(
                     httpStatusCode.description,
-                    listOf("User is not found"),
+                    "Username or password is invalid",
                     httpStatusCode.value
                 )
             )
@@ -64,12 +68,12 @@ fun Route.userLogin(
             )
         )
         if (!isValidPassword) {
-            httpStatusCode = HttpStatusCode.Conflict
+            httpStatusCode = HttpStatusCode.BadRequest
             call.respond(
                 httpStatusCode,
                 WebResponse(
                     httpStatusCode.description,
-                    listOf("Username or password is invalid"),
+                    "Username or password is invalid",
                     httpStatusCode.value
                 )
             )
@@ -82,8 +86,13 @@ fun Route.userLogin(
                     value = user.id
                 )
             )
-            call.respond(httpStatusCode, AuthResponse(token))
+            call.respond(
+                httpStatusCode, WebResponse(
+                    httpStatusCode.description,
+                    AuthResponse(token),
+                    httpStatusCode.value
+                )
+            )
         }
-
     }
 }

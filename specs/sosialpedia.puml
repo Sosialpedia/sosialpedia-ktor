@@ -1,15 +1,15 @@
 @startuml
 entity User {
- * id : VARCHAR(50)
+ * id : VARCHAR(128)
  --
  * username : VARCHAR(50)
  email : VARCHAR(100)
  * hashed_password : VARCHAR(100)
  * salt : VARCHAR(100)
  phone_number : VARCHAR(50)
- profile_pic : VARCHAR(100)
+ profile_pic_url : VARCHAR(100)
  bio : TEXT
- date_birth : BIGINT
+ date_of_birth : BIGINT
  * created_at : BIGINT
  updated_at : BIGINT
  last_login : BIGINT
@@ -19,30 +19,20 @@ entity User {
 }
 
 entity Post {
-* id : VARCHAR(50)
+* id : VARCHAR(128)
 --
-* user_id : VARCHAR(50)
+* user_id : VARCHAR(128)
 * content : TEXT
 have_attachment : Boolean
 * created_at : BIGINT
 }
 
 entity Comment {
-* id : VARCHAR(50)
+* id : VARCHAR(128)
 --
-* user_id : VARCHAR(50)
-* post_id : VARCHAR(50)
-* content : TEXT
-have_attachment : Boolean
-* created_at : BIGINT
-}
-
-entity ChildComment {
-* id : VARCHAR(50)
---
-* user_id : VARCHAR(50)
-* post_id : VARCHAR(50)
-* comment_id : VARCHAR(50)
+* user_id : VARCHAR(128)
+* post_id : VARCHAR(128)
+parent_comment_id : (128))
 * content : TEXT
 have_attachment : Boolean
 * created_at : BIGINT
@@ -66,14 +56,11 @@ comment_id : VARCHAR(50)
 
 User --{ Post
 User --{ Comment
-User --{ ChildComment
 User --{ Like
 User --{ Dislike
 Post --{ Comment
-Post --{ ChildComment
 Post --{ Like
 Post --{ Dislike
-Comment --{ ChildComment
 Comment --{ Like
 Comment --{ Dislike
 @enduml

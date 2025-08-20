@@ -5,5 +5,5 @@ package id.sosialpedia.users.data.model
  * @Date 26/08/22
  */
 enum class Gender {
-    Male, Female, NotSpecified
+    MALE, FEMALE, NotSpecified
 }

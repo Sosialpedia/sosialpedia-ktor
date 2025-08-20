@@ -10,5 +10,5 @@ import org.koin.dsl.module
  */
 
 val commentsModule = module {
-    single<CommentRepository> { CommentRepositoryImpl(get(), get()) }
+    single<CommentRepository> { CommentRepositoryImpl(get()) }
 }

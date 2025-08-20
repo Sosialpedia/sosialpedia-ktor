@@ -1,12 +1,12 @@
 package id.sosialpedia.posts.data.model
 
 import id.sosialpedia.users.data.model.UserEntity
-import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.dao.id.UUIDTable
+import org.jetbrains.exposed.sql.ReferenceOption
 
-object PostEntity : Table("post") {
-    val id = varchar("id", 50).uniqueIndex()
-    val userId = varchar("user_id", 50).references(UserEntity.id)
+object PostEntity : UUIDTable("posts") {
+    val userId = uuid("user_id").references(UserEntity.id, onDelete = ReferenceOption.CASCADE)
     val content = text("content")
-    val haveAttach = bool("have_attachment")
+    val haveAttachment = bool("have_attachment").default(false)
     val createdAt = long("created_at")
 }

@@ -5,7 +5,6 @@ import id.sosialpedia.users.domain.UserRepository
 import id.sosialpedia.users.routes.model.CreateUserRequest
 import id.sosialpedia.util.WebResponse
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -24,7 +23,7 @@ fun Route.userRegister(
 
     post("user/signup") {
         var httpStatusCode = HttpStatusCode.Created
-        val createUserRequest = call.receiveOrNull<CreateUserRequest>() ?: kotlin.run {
+        val createUserRequest = call.receiveNullable<CreateUserRequest>() ?: kotlin.run {
             call.respond(HttpStatusCode.BadRequest)
             return@post
         }
@@ -51,11 +50,11 @@ fun Route.userRegister(
         val result = userRepository.registerUser(newUserRequest)
         if (result.isSuccess) {
             call.respond(
-                httpStatusCode,
-                WebResponse(
-                    httpStatusCode.description,
-                    result.getOrNull(),
-                    httpStatusCode.value
+                status = httpStatusCode,
+                message = WebResponse(
+                    message = httpStatusCode.description,
+                    data = result.getOrNull(),
+                    code = httpStatusCode.value
                 )
             )
         } else {

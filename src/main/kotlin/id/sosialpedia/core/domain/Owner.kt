@@ -9,6 +9,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Owner(
+    val userId: String,
     val username: String,
-    val profilePic: String?
+    val profilePicUrl: String?
 )

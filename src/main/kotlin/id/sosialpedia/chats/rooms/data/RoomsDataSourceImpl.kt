@@ -10,8 +10,8 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import java.util.*
 
 /**
  * @author Samuel Mareno
@@ -26,7 +26,7 @@ class RoomsDataSourceImpl(
             try {
                 RoomsEntity.insert {
                     it[id] = roomId
-                    it[author] = userId
+                    it[author] = UUID.fromString(userId)
                     it[createdAt] = System.currentTimeMillis()
                 }.insertedCount
             } catch (e: Exception) {
@@ -47,6 +47,7 @@ class RoomsDataSourceImpl(
                         )
                     }.firstOrNull()
             } catch (e: Exception) {
+                e.printStackTrace()
                 null
             }
         }
@@ -58,7 +59,7 @@ class RoomsDataSourceImpl(
             try {
                 ParticipantsEntity.insert {
                     it[ParticipantsEntity.roomId] = roomId
-                    it[ParticipantsEntity.userId] = userId
+                    it[ParticipantsEntity.userId] = UUID.fromString(userId)
                 }.insertedCount
             } catch (e: Exception) {
                 println("create participants error: $e")

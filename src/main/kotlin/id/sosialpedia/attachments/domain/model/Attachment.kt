@@ -8,9 +8,8 @@ package id.sosialpedia.attachments.domain.model
 @kotlinx.serialization.Serializable
 data class Attachment(
     val id: String,
-    val linkUrl: String,
-    val type: String,
-    val postId: String?,
-    val commentId: String?,
-    val childCommentId: String?
+    val postId: String,
+    val attachmentUrl: String,
+    val attachmentType: String,
+    val createdAt: Long
 )
