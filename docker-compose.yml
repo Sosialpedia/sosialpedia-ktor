@@ -1,16 +1,5 @@
 version: "1"
 services:
-  sosialpedia_db:
-    image: postgres:14.5
-    ports:
-      - 1234:5432
-    environment:
-      - POSTGRES_USER=reno
-      - POSTGRES_PASSWORD=shalom7007
-      - POSTGRES_DB=sosialpedia_db
-    volumes:
-      - /opt/sosialpedia/postgresql/data:/var/lib/postgresql/data
-    restart: always
   sosialpedia_ktor:
     build:
       context: .
