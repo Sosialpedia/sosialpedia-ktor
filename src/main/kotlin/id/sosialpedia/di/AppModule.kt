@@ -16,8 +16,9 @@ val mainModule = module {
         val password = System.getenv("DB_PASSWORD").toString()
         val databaseIp = System.getenv("DB_IP").toString()
         val databasePort = System.getenv("DB_PORT").toString()
+        val databaseName = System.getenv("DB_NAME").toString()
         Database.connect(
-            url = "jdbc:postgresql://$databaseIp:$databasePort/sosialpedia_db",
+            url = "jdbc:postgresql://$databaseIp:$databasePort/$databaseName",
             driver = "org.postgresql.Driver",
             user = username,
             password = password
