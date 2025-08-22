@@ -6,10 +6,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8081:80"
-    volumes:
-      - /opt/sosialpedia/app:/app
-    environment:
-      - DB_USERNAME=reno
-      - DB_PASSWORD=shalom7007
+
 
     restart: always
