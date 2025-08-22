@@ -11,6 +11,7 @@ import id.sosialpedia.security.token.TokenConfig
 import id.sosialpedia.users.di.usersModule
 import id.sosialpedia.votes.di.voteModule
 import io.ktor.server.application.*
+import io.ktor.server.plugins.forwardedheaders.*
 import org.koin.ktor.plugin.Koin
 
 fun main(args: Array<String>) {
@@ -18,6 +19,9 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
+
+    install(ForwardedHeaders)
+    install(XForwardedHeaders)
 
     install(Koin) {
         modules(
