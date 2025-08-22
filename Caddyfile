@@ -1,0 +1,28 @@
+api.sosialpedia.mareno.my.id {
+  encode zstd gzip
+
+  # CORS (sesuaikan origin FE kamu)
+  @options method OPTIONS
+  handle @options {
+    header Access-Control-Allow-Origin *
+    header Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+    header Access-Control-Allow-Headers "Content-Type, Authorization"
+    header Access-Control-Max-Age 86400
+    respond "" 204
+  }
+
+  header {
+    Access-Control-Allow-Origin *
+    Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+    Access-Control-Allow-Headers "Content-Type, Authorization"
+    # HSTS (aktifkan setelah yakin HTTPS jalan di semua subdomain)
+    # Strict-Transport-Security "max-age=15552000; includeSubDomains; preload"
+  }
+
+  reverse_proxy sosialpedia_ktor:80 {
+    header_up X-Forwarded-Proto {scheme}
+    header_up X-Forwarded-For {remote_host}
+    header_up Host {host}
+    # health_uri /health   # aktifkan kalau punya endpoint health
+  }
+}

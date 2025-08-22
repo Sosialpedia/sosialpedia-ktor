@@ -1,11 +1,30 @@
-version: "1"
+version: "3.8"
+
 services:
   sosialpedia_ktor:
+    env_file:
+      - .env
     build:
       context: .
       dockerfile: Dockerfile
+
+    expose:
+      - "80"
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2-alpine
     ports:
-      - "8081:80"
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - sosialpedia_ktor
+    restart: unless-stopped
 
-
-    restart: always
+volumes:
+  caddy_data:
+  caddy_config:
